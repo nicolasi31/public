@@ -1,0 +1,32 @@
+# si besoin d un serveur web
+python3 -m http.server -b 192.168.122.2 -d /media/donnees/virtualisation/tftpboot/
+
+# diff de configs tftp et http d un network libvirt
+<network xmlns:dnsmasq='http://libvirt.org/schemas/network/dnsmasq/1.0'>                | <network xmlns:dnsmasq='http://libvirt.org/schemas/network/dnsmasq/1.0'>
+  <name>routed122</name>                                                                    <name>routed122</name>
+  <uuid>01234567-89ab-cdfe-f012-3456789abcde</uuid>                                         <uuid>01234567-89ab-cdfe-f012-3456789abcde</uuid>
+  <forward mode='open'/>                                                                    <forward mode='open'/>
+  <bridge name='virbr122' zone='libvirt' stp='on' delay='0' macTableManager='libvirt'/>     <bridge name='virbr122' zone='libvirt' stp='on' delay='0' macTableManager='libvirt'/>
+  <mac address='52:54:00:aa:67:da'/>                                                        <mac address='52:54:00:aa:67:da'/>
+  <domain name='example.com'/>                                                               <domain name='example.com'/>
+  <dns>                                                                                     <dns>
+    <forwarder addr='192.168.0.254'/>                                                         <forwarder addr='192.168.0.254'/>
+    <host ip='192.168.122.2'>                                                                 <host ip='192.168.122.2'>
+      <hostname>zotac</hostname>                                                              <hostname>zotac</hostname>
+    </host>                                                                                   </host>
+  </dns>                                                                                    </dns>
+  <ip address='192.168.122.2' netmask='255.255.255.0'>                                      <ip address='192.168.122.2' netmask='255.255.255.0'>
+    <tftp root='/media/donnees/virtualisation/tftpboot'/>                               <
+    <dhcp>                                                                                    <dhcp>
+      <range start='192.168.122.100' end='192.168.122.199'/>                                    <range start='192.168.122.100' end='192.168.122.199'/>
+      <host mac='52:54:00:00:7a:65' name='centos8' ip='192.168.122.110'/>                       <host mac='52:54:00:00:7a:65' name='centos8' ip='192.168.122.110'/>
+      <host mac='52:54:00:00:7a:66' name='debian10' ip='192.168.122.111'/>                      <host mac='52:54:00:00:7a:66' name='debian10' ip='192.168.122.111'/>
+      <bootp file='lpxelinux.0'  server='192.168.122.2'/>                               |       <bootp file='http://192.168.122.2:8000/lpxelinux.0'/>
+    </dhcp>                                                                                   </dhcp>
+  </ip>                                                                                     </ip>
+  <dnsmasq:options>                                                                         <dnsmasq:options>
+    <dnsmasq:option value='dhcp-option=option:ntp-server,195.83.132.135'/>                    <dnsmasq:option value='dhcp-option=option:ntp-server,195.83.132.135'/>
+    <dnsmasq:option value='dhcp-option=option:router,192.168.122.2'/>                         <dnsmasq:option value='dhcp-option=option:router,192.168.122.2'/>
+  </dnsmasq:options>                                                                        </dnsmasq:options>
+</network>                                                                                </network>
+

@@ -1,0 +1,5 @@
+#host s128          { hardware ethernet 52:54:00:af:86:FC; fixed-address 192.168.0.252; option host-name "s128"; }
+host server01     { hardware ethernet 52:54:00:af:86:64; fixed-address 192.168.0.100; option host-name "server01"; }
+
+#host debianiscsi { hardware ethernet 52:54:00:16:3b:37; fixed-address 192.168.0.101; option host-name "debianiscsi"; filename ""; option root-path "iscsi:192.168.0.252:6:3260:1:iqn.2018-12.com.example:pxe.iscsi1"; option iscsi-initiator-iqn "iqn.2018-12.com.example:debianiscsi"; }
+# syntax: iscsi:<servername>:[protocol]:[port]:[LUN]:<targetname>

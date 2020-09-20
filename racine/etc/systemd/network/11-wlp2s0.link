@@ -1,0 +1,8 @@
+[Match]
+#OriginalName=wlp2s0
+Type=wlan
+
+[Link]
+#AutoNegotiation=1
+Name=wlp2s0
+RequiredForOnline=no

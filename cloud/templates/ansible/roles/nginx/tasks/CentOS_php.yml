@@ -1,0 +1,10 @@
+- name: "PHP - {{ ansible_distribution }} - Packages install"
+  package:
+    name:
+      - php-fpm.x86_64
+      - php-pgsql.x86_64
+    state: present
+  tags: [ php, packages ]
+  notify:
+  - restart nginx
+

@@ -1,0 +1,6 @@
+- hosts:
+  - centos_hosts
+  - debian_hosts
+#- hosts: all
+  roles:
+    - nginx

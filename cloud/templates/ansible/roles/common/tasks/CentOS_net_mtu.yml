@@ -1,0 +1,10 @@
+- name: "{{ ansible_distribution }} - Network - Update MTU"
+  shell: |
+    NMCLI_UUID=$(nmcli connection show | grep eth0 | tr " " "\n" | grep -e "[a-z0-9]\{8\}-[a-z0-9]\{4\}-")
+    nmcli connection modify uuid "${NMCLI_UUID}" mtu {{ mtu }}
+  args:
+    executable: /bin/bash
+  tags: [ centos, never, mtu ]
+#  sudo: yes
+
+

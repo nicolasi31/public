@@ -1,0 +1,65 @@
+ansible_user: root
+
+newuser: admin
+newuserpw: "$6$SRyAaon9HjH7hBbx$wQyk4VDBNcFr.3kkUrivhiB6wh49wh5Dy.HkOM3vyUYmA6q9ZHJcZLvHsu7MGhen9sQ0KEX0oaS1GHYNK1a.O0"
+
+profilefile: ".bash_profile"
+
+commonpackages:
+  - bash
+  - bash-completion
+  - sudo
+  - util-linux
+  - iproute2
+  - nftables
+  - screen
+  - tmux
+  - xauth
+  - htop
+  - iftop
+  - ngrep
+  - tcpdump
+  - nmap
+  - parted
+
+gitlaburl: "https://gitlab.com/nicolasi31/public/-/raw/master"
+
+persoconffiles:
+  - .tmux.conf
+  - .screenrc
+  - .vimrc
+
+persoscripts:
+  - perso-00-enabled.sh
+  - perso-alias_and_variables.sh
+  - perso-cat_functions.sh
+  - perso-cisco.sh
+  - perso-cloud-hypervisor.sh
+  - perso-dash.sh
+  - perso-distrib.sh
+  - perso-download.sh
+  - perso-firecracker.sh
+  - perso-freebox.sh
+  - perso-genfile.sh
+  - perso-kvm.sh
+  - perso-mail.sh
+  - perso-miscfunctions.sh
+  - perso-mm-ipradio.sh
+  - perso-mm-iptv4sat.sh
+  - perso-mm-iptv.sh
+  - perso-network.sh
+  - perso-nftables.sh
+  - perso-per_arch.sh
+  - perso-persoscripts.sh
+  - perso-podcast.sh
+  - perso-ps_and_ls_colors.sh
+  - perso-pxe.sh
+  - perso-sauvegarde.sh
+  - perso-tipsdatabase.sh
+  - perso-tipsgnome.sh
+  - perso-tipskvm.sh
+  - perso-tipsmultimedia.sh
+  - perso-tipsnewinstall.sh
+  - perso-tipswindows.sh
+  - perso-usbkey.sh
+

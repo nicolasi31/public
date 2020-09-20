@@ -1,0 +1,16 @@
+- name: "{{ ansible_distribution }} - Grub - Update option file"
+  template:
+    src: "alpinegrubfile"
+    dest: "/etc/default/grub"
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_mounts[0].mount == "/boot/efi" or ansible_mounts[1].mount == "/boot/efi"
+  tags: [ alpine, grub ]
+
+- name: "{{ ansible_distribution }} - Grub - mkconfig"
+  shell: grub-mkconfig  > /boot/grub/grub.cfg
+  args:
+    executable: /bin/sh
+  when: ansible_mounts[0].mount == "/boot/efi" or ansible_mounts[1].mount == "/boot/efi"
+  tags: [ alpine, grub ]

@@ -1,0 +1,7 @@
+[Match]
+Name={{ ansible_default_ipv4.alias }}
+
+[Network]
+LinkLocalAddressing=no
+DHCP=yes
+

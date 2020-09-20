@@ -1,0 +1,19 @@
+- name: "{{ ansible_distribution }} - Packages - Install extra epel packages"
+  include_tasks: "{{ ansible_distribution }}_epel.yml"
+  tags: [ centos, packages ]
+
+- name: "{{ ansible_distribution }} - Network - Set MTU"
+  include_tasks: "{{ ansible_distribution }}_net_mtu.yml"
+  tags: [ centos, network, mtu ]
+
+- name: "{{ ansible_distribution }} - ETCKeeper"
+  include_tasks: "{{ ansible_distribution }}_etckeeper.yml"
+  tags: [ centos, etckeeper ]
+
+- name: "{{ ansible_distribution }} - Network - Firewall"
+  include_tasks: "{{ ansible_distribution }}_firewall.yml"
+  tags: [ centos, network, firewall ]
+
+- name: "{{ ansible_distribution }} - SELinux"
+  include_tasks: "{{ ansible_distribution }}_selinux.yml"
+  tags: [ centos, selinux ]

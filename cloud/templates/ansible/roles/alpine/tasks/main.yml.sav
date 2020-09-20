@@ -1,0 +1,123 @@
+# Set Hostname
+- name: "{{ ansible_distribution }} - Hostname - Ensure hostname is set"
+  hostname:
+    name: "{{ hostname.short }}.{{ hostname.domain }}"
+  tags: [ alpine, hostname ]
+
+- name: "{{ ansible_distribution }} - Hostname - Add hostname in /etc/hosts"
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ ansible_default_ipv4.address }} {{ hostname.short }}.{{ hostname.domain }} {{ hostname.short }}"
+    create: yes
+  tags: [ alpine, hostname ]
+
+###################################################################
+
+- name: "{{ ansible_distribution }} - Packages - add common packages"
+  package:
+    name: "{{ commonpackages }}"
+    state: present
+  tags: [ alpine, packages ]
+
+###################################################################
+
+- name: "{{ ansible_distribution }} - Users - Create {{ newuser }}"
+  user:
+    name: "{{ newuser }}"
+    password: "{{ newuserpw }}"
+    shell: /bin/bash
+    groups: "wheel"
+    append: yes
+  tags: [ alpine, users ]
+
+- name: "{{ ansible_distribution }} - Shell - Create /home/{{ newuser }}/.ssh directory"
+  file:
+    path: "/home/{{ newuser }}/.ssh"
+    state: directory
+    mode: '0750'
+  tags: [ alpine, ssh ]
+
+- name: "{{ ansible_distribution }} - Shell - Various commands"
+  shell: |
+    cp /root/.ssh/authorized_keys /home/{{ newuser }}/.ssh/
+    chown -R {{ newuser }}:users /home/{{ newuser }}/
+  args:
+    executable: /bin/sh
+  tags: [ alpine, ssh ]
+
+- name: "{{ ansible_distribution }} - Users - Change root shell"
+  lineinfile:
+    path: /etc/passwd
+    regexp: "^root:x:0:0:root:/root:/bin/ash"
+    line: root:x:0:0:root:/root:/bin/bash
+  tags: [ alpine, users ]
+
+###################################################################
+
+- name: "{{ ansible_distribution }} - Download - Download perso conf files"
+  get_url:
+    url: "{{ gitlaburl }}/racine/home/{{item}}"
+    dest: "/home/{{ newuser }}/{{item}}"
+    mode: "0650"
+  with_items:
+    - "{{ persoconffiles }}"
+  tags: [ alpine, download ]
+
+- name: "{{ ansible_distribution }} - Download - Create {{ newuser }} .profile.d directory"
+  file:
+    path: "/home/{{ newuser }}/.profile.d"
+    state: directory
+    mode: '0750'
+  tags: [ alpine, download ]
+
+- name: "{{ ansible_distribution }} - Download - Download perso scripts"
+  get_url:
+    url: "{{ gitlaburl }}/racine/home/.profile.d/{{item}}"
+    dest: "/home/{{ newuser }}/.profile.d/{{item}}"
+    mode: "0750"
+  with_items:
+    - "{{ persoscripts }}"
+  tags: [ alpine, download ]
+
+################################################################################
+
+- name: "{{ ansible_distribution }} - Download - Chown {{ newuser }} home"
+  file: dest="/home/{{ newuser }}" owner="{{ newuser }}" group=users recurse=yes
+  tags: [ alpine, download ]
+
+################################################################################
+
+- name: "{{ ansible_distribution }} - Download - Update root {{ profilefile }}"
+  blockinfile:
+    path: "/root/{{ profilefile }}"
+    create: yes
+    block: |
+      # MYOWNSCRIPTSBEGIN
+      if [ -d /home/{{ newuser }}/.profile.d ]; then
+       for i in /home/{{ newuser }}/.profile.d/*.sh; do
+        if [ -r $i ]; then
+         . $i
+        fi
+       done
+       unset i
+      fi
+      # MYOWNSCRIPTSEND
+  tags: [ alpine, download ]
+
+- name: "{{ ansible_distribution }} - Download - Update {{ newuser }} {{ profilefile }}"
+  blockinfile:
+    path: "/home/{{ newuser }}/{{ profilefile }}"
+    create: yes
+    block: |
+      # MYOWNSCRIPTSBEGIN
+      if [ -d ${HOME}/.profile.d ]; then
+       for i in ${HOME}/.profile.d/*.sh; do
+        if [ -r $i ]; then
+         . $i
+        fi
+       done
+       unset i
+      fi
+      # MYOWNSCRIPTSEND
+  tags: [ alpine, download ]
+

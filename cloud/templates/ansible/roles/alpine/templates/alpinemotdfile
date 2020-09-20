@@ -1,0 +1,13 @@
+################################################
+
+   Hostname :     {{ hostname.short }}.{{ hostname.domain }}
+   Description :  {{ ansible_distribution }} {{ ansible_distribution_version }} {{ ansible_machine }}
+   Kernel :       {{ ansible_kernel }}
+   MAC address :  {{ ansible_default_ipv4.macaddress }}
+   IPv4 :         {{ ansible_default_ipv4.address }}
+   Gateway :      {{ ansible_default_ipv4.gateway }}
+   DNS :          {{ ansible_dns.nameservers[0] }}, {{ ansible_dns.nameservers[1] }}
+   Interface :    {{ ansible_default_ipv4.alias }}
+   MTU :          {{ ansible_default_ipv4.mtu }}
+
+################################################

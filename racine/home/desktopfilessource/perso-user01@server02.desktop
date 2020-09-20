@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=user01@server02
+GenericName=user01@server02
+Keywords=folder;manager;explore;disk;filesystem;Perso;
+Exec=/usr/bin/nautilus -w sftp://user01@server02/
+# Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+Icon=org.gnome.Nautilus
+Terminal=false
+Type=Application
+DBusActivatable=true
+StartupNotify=true
+Categories=GNOME;GTK;Utility;Core;FileManager;Perso;RemoteAccess;
+X-GNOME-UsesNotifications=true

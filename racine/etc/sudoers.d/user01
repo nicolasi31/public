@@ -1,0 +1,13 @@
+Defaults env_keep+="SSH_CLIENT SSH_CONNECTION SSH_TTY LANG ftp_proxy http_proxy https_proxy no_proxy"
+
+#user01        ALL=(ALL)       NOPASSWD: ALL
+
+#
+Cmnd_Alias POWER = /sbin/shutdown, /sbin/reboot, /sbin/poweroff, /sbin/halt, /bin/systemctl reboot, /bin/systemctl poweroff, /bin/systemctl suspend, /bin/systemctl hibernate
+user01 ALL=(ALL) NOPASSWD: POWER
+#
+#user01 ALL=(ALL) NOPASSWD:/bin/mount, /bin/umount
+#user01 ALL=(ALL) NOPASSWD:/usr/bin/synclient, /usr/bin/tail
+#user01 ALL=(ALL) NOPASSWD:/usr/local/bin/kled.sh
+#user01 ALL=(ALL) NOPASSWD:/usr/bin/ip neigh del *
+#user01 ALL=(ALL) NOPASSWD:/usr/sbin/fprobe -i eth0 127.0.0.1\:10003

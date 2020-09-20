@@ -1,0 +1,159 @@
+!xrdb -merge ~/.Xresources
+!(x=`tput op` y=`printf %76s`;for i in {0..256};do o=00$i;echo -e ${o:${#o}-3:3} `tput setaf $i;tput setab $i`${y// /=}$x;done)
+!urxvt --help 2>&1| sed -n '/:  /s/^ */! URxvt*/gp'
+! urxvt
+
+!URxvt.font: xft:Bitstream Vera Sans Mono:pixelsize=26
+!URxvt.font: xft:Terminus:style=Regular:size=13
+!URxvt.font: xft:courier:pixelsize=49
+URxvt.font: xft:FreeMono:style=Regular:size=13
+URxvt.scrollBar: false
+URxvt.transparent: false
+URxvt.reverseVideo: false
+URxvt.background: black
+URxvt.foreground: white
+URxvt.geometry: 139x42
+!URxvt.geometry: 108x43
+!URxvt.geometry: 112x28
+!URxvt.geometry: 123x39
+
+URxvt.keysym.M-c:   perl:clipboard:copy
+URxvt.keysym.M-v:   perl:clipboard:paste
+URxvt.keysym.M-C-v: perl:clipboard:paste_escaped
+
+!URxvt.keysym.KP_Up: ^[[A
+!URxvt.keysym.KP_Right: ^[[C
+!URxvt.keysym.KP_Left: ^[[D
+!URxvt.keysym.KP_Down: ^[[B
+!URxvt.keysym.KP_Insert: ^[[2~
+!URxvt.keysym.KP_Delete: ^[[3~
+!URxvt.keysym.KP_Add: +
+!URxvt.keysym.KP_Subtract: -
+!URxvt.keysym.KP_Multiply: *
+!URxvt.keysym.KP_Divide: /
+!URxvt.keysym.KP_Enter: ^M
+URxvt.keysym.M-1: command:\033]50;xft:FreeMono:style=Regular:size=13\007
+URxvt.keysym.M-2: command:\033]50;xft:FreeMono:style=Regular:size=18\007
+URxvt.keysym.M-3: command:\033]50;xft:FreeMono:style=Regular:size=20\007
+URxvt.keysym.M-4: command:\033]50;xft:FreeMono:style=Regular:size=22\007
+URxvt.keysym.M-5: command:\033]50;xft:FreeMono:style=Regular:size=24\007
+URxvt.keysym.M-6: command:\033]50;xft:FreeMono:style=Regular:size=28\007
+URxvt.keysym.M-7: command:\033]50;xft:FreeMono:style=Regular:size=32\007
+URxvt.keysym.M-8: command:\033]50;xft:FreeMono:style=Regular:size=42\007
+URxvt.keysym.M-9: command:\033]50;xft:FreeMono:style=Regular:size=52\007
+URxvt.keysym.M-0: command:\033]50;xft:FreeMono:style=Regular:size=62\007
+!URxvt.keysym.M-1: command:\033]50;xft:courier:pixelsize=19\007
+!URxvt.keysym.M-2: command:\033]50;xft:courier:pixelsize=18\007
+!URxvt.keysym.M-3: command:\033]50;xft:courier:pixelsize=14\007
+!URxvt.keysym.M-4: command:\033]50;xft:courier:pixelsize=13\007
+!URxvt.keysym.M-5: command:\033]50;xft:courier:pixelsize=11\007
+!URxvt.keysym.M-1: command:\033]50;xft:Terminus:style=Regular:size=11\007
+!URxvt.keysym.M-2: command:\033]50;xft:Terminus:style=Regular:size=13\007
+!URxvt.keysym.M-3: command:\033]50;xft:Terminus:style=Regular:size=14\007
+!URxvt.keysym.M-4: command:\033]50;xft:Terminus:style=Regular:size=18\007
+!URxvt.keysym.M-5: command:\033]50;xft:Terminus:style=Regular:size=19\007
+
+URxvt*remote-clipboard.fetch: true
+URxvt*remote-clipboard.store: true
+
+! xterm ----------------------------------------------------------------------
+
+xterm*VT100.geometry:     112x28
+!xterm*VT100.geometry:     80x25
+!xterm*faceName:           Terminus:style=Regular:size=18
+xterm*faceName: Terminus:style=Regular:size=49
+!xterm*faceName: xft:courier:pixelsize=49
+xterm*faceSize: 49
+!xterm*font:              -*-dina-medium-r-*-*-16-*-*-*-*-*-*-*
+!xterm*faceSize: 18
+!xterm.faceName: 'Luxi Mono'
+xterm*selectToClipboard: 1
+xterm*dynamicColors:      true
+xterm*utf8:               2
+xterm*eightBitInput:      true
+xterm*saveLines:          512
+xterm*scrollKey:          true
+xterm*scrollTtyOutput:    false
+xterm*scrollBar:          false
+xterm*rightScrollBar:     true
+xterm*jumpScroll:         true
+xterm*multiScroll:        true
+xterm*toolBar:            true
+xterm*background: black
+xterm*foreground: white
+
+!------------------------
+
+! xpdf -----------------------------------------------------------------------
+
+xpdf*enableFreetype:    yes
+xpdf*antialias:         yes
+xpdf*foreground:        black
+xpdf*background:        white
+xpdf*urlCommand:        /usr/bin/iceweasel %s
+
+! xscreensaver ---------------------------------------------------------------
+
+!font settings
+!xscreensaver.Dialog.headingFont:        -*-terminus-*-*-*-*-24-*-*-*-*-*-iso10646-*
+!xscreensaver.Dialog.bodyFont:           -*-terminus-*-*-*-*-18-*-*-*-*-*-iso10646-*
+!xscreensaver.Dialog.labelFont:          -*-terminus-*-*-*-*-24-*-*-*-*-*-iso10646-*
+!xscreensaver.Dialog.unameFont:          -*-terminus-*-*-*-*-33-*-*-*-*-*-iso10646-*
+!xscreensaver.Dialog.buttonFont:         -*-terminus-*-*-*-*-13-*-*-*-*-*-iso10646-*
+!xscreensaver.Dialog.dateFont:           -*-terminus-*-*-*-*-24-*-*-*-*-*-iso10646-*
+!xscreensaver.passwd.passwdFont:         -*-terminus-*-*-*-*-14-*-*-*-*-*-iso10646-*
+!
+xscreensaver.Dialog.headingFont: *-helvetica-bold-r-*-*-*-180-*-*-*-iso8859-1
+xscreensaver.Dialog.bodyFont: *-helvetica-bold-r-*-*-*-140-*-*-*-iso8859-1
+xscreensaver.Dialog.labelFont: *-helvetica-bold-r-*-*-*-140-*-*-*-iso8859-1
+xscreensaver.Dialog.unameFont: *-helvetica-bold-r-*-*-*-120-*-*-*-iso8859-1
+xscreensaver.Dialog.buttonFont: *-helvetica-bold-r-*-*-*-140-*-*-*-iso8859-1
+xscreensaver.Dialog.dateFont: *-helvetica-medium-r-*-*-*-80-*-*-*-iso8859-1
+
+! Helvetica asterisks look terrible.
+xscreensaver.passwd.passwdFont: *-courier-medium-r-*-*-*-140-*-*-*-iso8859-1
+!
+!
+!xscreensaver.dateFormat:    %I:%M%P %a %b %d, %Y
+xscreensaver.dateFormat: %d-%b-%y (%a); %I:%M %p
+xscreensaver.mode:    blank
+xscreensaver.dpmsEnabled:    true
+xscreensaver.dpmsQuickOff:    true
+xscreensaver.splash:    false
+
+xscreensaver.Dialog.foreground: #000000
+xscreensaver.Dialog.background: #E6E6E6
+xscreensaver.Dialog.Button.foreground: #000000
+xscreensaver.Dialog.Button.background: #F5F5F5
+
+xscreensaver.Dialog.text.foreground: #000000
+xscreensaver.Dialog.text.background: #FFFFFF
+xscreensaver.passwd.thermometer.foreground: #4464AC
+xscreensaver.passwd.thermometer.background: #FFFFFF
+xscreensaver.Dialog.topShadowColor: #FFFFFF
+xscreensaver.Dialog.bottomShadowColor: #CECECE
+xscreensaver.Dialog.logo.width: 210
+xscreensaver.Dialog.logo.height: 210
+xscreensaver.Dialog.internalBorderWidth: 24
+xscreensaver.Dialog.borderWidth: 1
+xscreensaver.Dialog.shadowThickness: 2
+
+xscreensaver.passwd.heading.label: XScreenSaver %s
+xscreensaver.passwd.body.label: Cet ecran est verrouille
+xscreensaver.passwd.unlock.label: OK
+xscreensaver.passwd.login.label: Nouveau Login
+xscreensaver.passwd.user.label: Utilisateur:
+xscreensaver.passwd.thermometer.width: 8
+xscreensaver.passwd.asterisks: True
+xscreensaver.passwd.uname: True
+
+
+! nedit -----------------------------------------------------------------------
+!nedit.overrideDefaultVirtualKeyBindings: Never
+!nedit*text.foreground: gray90
+!nedit*text.background: black
+nedit.textFont: -*-courier-medium-r-normal--24-*-*-*-*-iso8859-1
+nedit.textFgColor: rgb:e5/e5/e5
+nedit.textBgColor: gray
+!nedit*text.cursorForeground: white
+!nedit*text.blinkRate: 600

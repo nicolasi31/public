@@ -1,0 +1,6 @@
+[NetDev]
+Name=brkvm86
+Kind=bridge
+
+[Bridge]
+STP=on

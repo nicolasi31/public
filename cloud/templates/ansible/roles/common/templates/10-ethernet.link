@@ -1,0 +1,7 @@
+[Match]
+#OriginalName={{ ansible_default_ipv4.alias }}
+Type=ether
+
+[Link]
+AutoNegotiation=1
+Name={{ ansible_default_ipv4.alias }}

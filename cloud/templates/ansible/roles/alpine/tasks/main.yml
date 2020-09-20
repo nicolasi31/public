@@ -1,0 +1,28 @@
+- name: "{{ ansible_distribution }} - Get Facts"
+  include_tasks: "{{ ansible_distribution }}_getfacts.yml"
+  tags: [ alpine, getfacts ]
+- name: "{{ ansible_distribution }} - Hostname"
+  include_tasks: "{{ ansible_distribution }}_hostname.yml"
+  tags: [ alpine, hostname ]
+- name: "{{ ansible_distribution }} - Packages"
+  include_tasks: "{{ ansible_distribution }}_packages.yml"
+  tags: [ alpine, packages ]
+- name: "{{ ansible_distribution }} - Users"
+  include_tasks: "{{ ansible_distribution }}_users.yml"
+  tags: [ alpine, users ]
+- name: "{{ ansible_distribution }} - Network - NFtables"
+  include_tasks: "{{ ansible_distribution }}_nftables.yml"
+  tags: [ alpine, network, nftables ]
+- name: "{{ ansible_distribution }} - Banner"
+  include_tasks: "{{ ansible_distribution }}_banner.yml"
+  tags: [ alpine, banner ]
+- name: "{{ ansible_distribution }} - Grub"
+  include_tasks: "{{ ansible_distribution }}_grub.yml"
+  tags: [ alpine, grub ]
+- name: "{{ ansible_distribution }} - Downloads"
+  include_tasks: "{{ ansible_distribution }}_download.yml"
+  tags: [ alpine, download ]
+- name: "{{ ansible_distribution }} - Get Facts"
+  include_tasks: "{{ ansible_distribution }}_getfacts.yml"
+  tags: [ alpine, getfacts ]
+

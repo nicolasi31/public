@@ -1,0 +1,81 @@
+#PATH pxeprogs/
+#INCLUDE pxelinux.cfg/menu.cfg
+DEFAULT menu.c32
+#DEFAULT vesamenu.c32
+#DEFAULT local
+#SERIAL 0 115200
+#CONSOLE 0
+UI menu.c32
+#UI vesamenu.c32
+PROMPT 0
+TIMEOUT 0
+#ALLOWOPTIONS 0
+#NOESCAPE=1
+#KBDMAP fr-pc.ktl
+F1 F1.hlp
+
+MENU width 80
+MENU rows 16
+#MENU margin 4
+#MENU hshift 13
+#MENU vshift 12
+#MENU RESOLUTION 1024 768
+##MENU RESOLUTION 800 600
+
+MENU PASSWORDMARGIN 3
+MENU PASSWORDROW 8
+
+##MENU background pxelinux.cfg/splash.png
+MENU background black
+#MENU color title        * #FFFFFFFF *
+#MENU color border       * #00000000 #00000000 none
+#MENU color sel          * #ffffffff #76a1d0ff *
+#MENU color hotsel       1;7;37;40 #ffffffff #76a1d0ff *
+#MENU color tabmsg       * #ffffffff #00000000 *
+#MENU color help         37;40 #ffdddd00 #00000000 none
+# The command line must be at least one line from the bottom.
+#MENU cmdlinerow 16
+#MENU timeoutrow 16
+#MENU helpmsgrow 15
+#MENU tabmsgrow 18
+MENU tabmsg Press ENTER to boot or TAB to edit a menu entry
+
+MENU TITLE PXE server
+
+INCLUDE pxelinux.cfg/install-live
+INCLUDE pxelinux.cfg/console
+INCLUDE pxelinux.cfg/test
+
+MENU SEPARATOR
+
+LABEL local
+	MENU LABEL ^4 Boot From Local Drive
+	localboot 0xffff
+
+MENU SEPARATOR
+
+LABEL memtest
+	MENU LABEL ^5 Memory test
+	TEXT HELP
+!!! BIOS ONLY, NOT UEFI !!!
+!!! NOT VIA CONSOLE !!!
+	ENDTEXT
+	MENU PASSWD $4$FTbsaqAD$XHcBqtAoRKxZCcRqGNkMfnbE510$
+	KERNEL memtest
+
+MENU SEPARATOR
+
+LABEL reboot
+	MENU LABEL ^6 Reboot
+	TEXT HELP
+!!! BIOS ONLY, NOT UEFI !!!
+	ENDTEXT
+	KERNEL reboot.c32
+
+LABEL poweroff
+	MENU LABEL ^7 Poweroff
+	TEXT HELP
+!!! BIOS ONLY, NOT UEFI !!!
+	ENDTEXT
+	KERNEL poweroff.c32
+

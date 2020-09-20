@@ -1,0 +1,12 @@
+[NetDev]
+Name=gvkvm
+Kind=geneve
+
+[GENEVE]
+Id=331
+Remote=192.168.60.33
+DestinationPort=60002
+UDPChecksum=true
+#MacLearning=true
+#ARPProxy=true
+TTL=30

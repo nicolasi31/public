@@ -1,0 +1,39 @@
+d-i debian-installer/locale string en_US
+d-i localechooser/supported-locales multiselect fr_FR.UTF-8, nl_NL.UTF-8
+d-i keyboard-configuration/xkb-keymap select fr
+d-i netcfg/enable boolean true
+d-i netcfg/choose_interface select auto
+d-i netcfg/get_hostname string unassigned-hostname
+d-i netcfg/get_domain string unassigned-domain
+d-i netcfg/wireless_wep string
+
+d-i	mirror/protocol		string http
+#d-i	mirror/country		string fr
+d-i	mirror/country		string manual
+d-i	mirror/http/hostname	string pxe
+d-i	mirror/http/directory	string /mount/ubuntu
+d-i	mirror/http/proxy	string
+#d-i	mirror/suite		string cosmic
+#d-i	mirror/udeb/suite	string cosmic
+#d-i	mirror/udeb/components	multiselect main
+#d-i	mirror/udeb/components	multiselect main, restricted
+
+d-i apt-setup/use_mirror boolean false
+d-i apt-setup/local0/repository string http://pxe/mount/ubuntu cosmic main
+d-i debian-installer/allow_unauthenticated boolean true
+
+d-i	live-installer/net-image string http://pxe/mount/ubuntu/casper/filesystem.squashfs
+
+d-i	partman-auto/init_automatically_partition	string some_device_lvm
+d-i	partman-auto/init_automatically_partition	seen false
+#tasksel	tasksel/force-tasks	string server
+tasksel tasksel/first   multiselect
+d-i	pkgsel/language-pack-patterns	string
+d-i	pkgsel/install-language-support	boolean false
+d-i	clock-setup/utc-auto	boolean true
+d-i	debian-installer/quiet	boolean false
+d-i	debian-installer/splash	boolean false
+#d-i	oem-config-udeb/frontend	string debconf
+d-i	grub-installer/timeout	string 2
+# Add the network and tasks oem-config steps by default.
+oem-config	oem-config/steps	multiselect language, timezone, keyboard, user, network, tasks

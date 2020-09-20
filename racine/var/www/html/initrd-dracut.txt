@@ -1,0 +1,3 @@
+dracut --add-drivers "virtio_balloon virtio_scsi virtio_console virtio_net dm_mirror dm_region_hash dm_log dm_mod vfat xfs ext4" --force /boot/initramfs-4.18.0-193.el8.x86_64.img       4.18.0-193.el8.x86_64
+dracut --add-drivers "virtio_balloon virtio_scsi virtio_console virtio_net dm_mirror dm_region_hash dm_log dm_mod vfat xfs ext4" --force /boot/initramfs-4.18.0-193.6.3.el8_2.x86_64.img 4.18.0-193.6.3.el8_2.x86_64
+

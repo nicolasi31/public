@@ -1,0 +1,8 @@
+[Match]
+OriginalName=brkvm86
+Type=bridge
+
+[Link]
+Name=brkvm86
+RequiredForOnline=no
+#MTUBytes=1426

@@ -1,0 +1,15 @@
+- name: Merge provided configuration with device configuration
+  ios_interfaces:
+    config:
+      - name: GigabitEthernet0/6
+        description: '{{ defaultdesc }}'
+        enabled: False
+        speed: auto
+        duplex: auto
+      - name: GigabitEthernet0/7
+        description: '{{ defaultdesc }}'
+        enabled: False
+        speed: auto
+        duplex: auto
+    state: merged
+    tags: [ common, desc ]

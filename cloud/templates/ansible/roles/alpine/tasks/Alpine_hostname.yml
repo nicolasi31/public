@@ -1,0 +1,27 @@
+- name: "{{ ansible_distribution }} - Hostname - Ensure hostname is set"
+  hostname:
+    name: "{{ hostname.short }}.{{ hostname.domain }}"
+  tags: [ alpine, hostname ]
+
+- name: "{{ ansible_distribution }} - Hostname - Add hostname in /etc/hosts"
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ ansible_default_ipv4.address }} {{ hostname.short }}.{{ hostname.domain }} {{ hostname.short }}"
+    create: yes
+  tags: [ alpine, hostname ]
+
+- name: "{{ ansible_distribution }} - Sysctl - Uploading own settings"
+  template:
+    src: "alpinesysctlfile"
+    dest: "/etc/sysctl.d/{{ hostname.short }}.conf"
+    owner: root
+    group: root
+    mode: 0644
+  tags: [ alpine, sysctl ]
+
+- name: "{{ ansible_distribution }} - Sysctl - Loading own settings"
+  shell: "sysctl -p /etc/sysctl.d/{{ hostname.short }}.conf"
+  args:
+    executable: /bin/sh
+  tags: [ alpine, sysctl ]
+

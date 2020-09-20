@@ -1,0 +1,10 @@
+- name: Add interface using aggregate
+  ios_interface:
+    aggregate:
+    - { name: GigabitEthernet0/8, mtu: 1499, description: {{ defaultdesc }} }
+    - { name: GigabitEthernet0/9, mtu: 1498, description: {{ defaultdesc }} }
+    duplex: auto
+    speed: auto
+    enabled: False
+    state: present
+    tags: [ common, desc ]

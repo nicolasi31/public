@@ -1,0 +1,100 @@
+<domain type='kvm'>
+  <name>vmtest01</name>
+  <title>vmtest01               192.168.0.10/24     52:54:c0:a8:00:0a</title>
+  <description>Name    : vmtest01
+User    : admin
+IP      : 192.168.0.10
+MASK    : 24
+VMMAC   : 52:54:c0:a8:00:0a
+GW      : 192.168.0.254
+DNS     : 192.168.0.252
+Network : default
+VM UUID : 01234567-89ab-cdef-0123-456789abcdef
+
+Console:
+virsh console vmtest01
+
+SSH:
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -l admin 192.168.0.10</description>
+  <memory unit='KiB'>4194304</memory>
+  <currentMemory unit='KiB'>4194304</currentMemory>
+  <vcpu placement='static'>2</vcpu>
+  <os>
+    <type arch='x86_64' machine='microvm'>hvm</type>
+    <kernel>/media/donnees/virtualisation/firecracker/kernel/bzImage</kernel>
+    <cmdline>console=hvc0 console=ttyS0 root=/dev/vda reboot=k panic=1 pci=off nomodules acpi=noirq noapic i8042.noaux i8042.nomux i8042.nopnp i8042.dumbkbd random.trust_cpu=on rw ip=192.168.0.10::192.168.0.254:255.255.255.0:vmtest01.mydomain.org:eth0:off:192.168.0.254:8.8.8.8:195.83.132.135</cmdline>
+    <boot dev='hd'/>
+    <bootmenu enable='no'/>
+    <bios useserial='no'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+  </features>
+  <cpu mode='host-model' check='partial'/>
+  <clock offset='utc'>
+    <timer name='rtc' tickpolicy='catchup'/>
+    <timer name='pit' tickpolicy='delay'/>
+    <timer name='hpet' present='no'/>
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <pm>
+    <suspend-to-mem enabled='no'/>
+    <suspend-to-disk enabled='no'/>
+  </pm>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='raw'/>
+      <source file='/media/donnees/virtualisation/images/vmtest01.raw'/>
+      <target dev='vda' bus='virtio'/>
+      <address type='virtio-mmio'/>
+    </disk>
+    <controller type='usb' index='0' model='none'/>
+    <controller type='pci' index='0' model='pci-root'/>
+    <controller type='virtio-serial' index='0'>
+      <address type='virtio-mmio'/>
+    </controller>
+    <interface type='network'>
+      <mac address='52:54:c0:a8:00:0a'/>
+      <source network='brdmz01'/>
+      <target dev='vmtest01'/>
+      <model type='virtio'/>
+      <address type='virtio-mmio'/>
+    </interface>
+    <serial type='pty'>
+      <target type='isa-serial' port='0'>
+        <model name='isa-serial'/>
+      </target>
+    </serial>
+    <serial type='dev'>
+      <source path='/dev/input/event0'/>
+      <target type='isa-serial' port='0'>
+        <model name='isa-serial'/>
+      </target>
+    </serial>
+    <console type='pty'>
+      <target type='serial' port='0'/>
+    </console>
+    <channel type='unix'>
+      <source mode='bind' path='/var/lib/libvirt/qemu/vmtest01.agent'/>
+      <target type='virtio' name='org.qemu.guest_agent.0'/>
+      <address type='virtio-serial' controller='0' bus='0' port='1'/>
+    </channel>
+    <input type='mouse' bus='ps2'/>
+    <input type='keyboard' bus='ps2'/>
+    <memballoon model='virtio'>
+      <address type='virtio-mmio'/>
+    </memballoon>
+    <rng model='virtio'>
+      <backend model='random'>/dev/urandom</backend>
+      <address type='virtio-mmio'/>
+    </rng>
+    <vsock model='virtio'>
+      <cid auto='yes' address='3'/>
+      <address type='virtio-mmio'/>
+    </vsock>
+  </devices>
+</domain>

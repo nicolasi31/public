@@ -1,0 +1,6 @@
+[NetDev]
+Name=brwan
+Kind=bridge
+
+[Bridge]
+STP=on

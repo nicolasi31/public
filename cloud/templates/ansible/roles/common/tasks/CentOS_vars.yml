@@ -1,0 +1,65 @@
+useradditionalgroups: "wheel"
+
+profilefile: ".bash_profile"
+
+nftablesconffile: "/etc/sysconfig/nftables.conf"
+
+rpmstoinstall:
+  - chrony
+  - mlocate
+  - yum-utils
+  - bzip2
+  - unzip
+  - bind-utils
+  - man-pages
+  - net-tools
+  - tree
+  - uuid
+  - glibc-langpack-fr
+#  - NetworkManager
+#  - firewalld
+#  - vim-enhanced
+#  - screen
+#  - etckeeper
+
+rpmstoremove:
+  - cloud-init
+  - glibc-all-langpacks
+  - selinux-policy-targeted
+  - selinux-policy
+  - rpm-plugin-selinux
+  - geolite2-city
+  - cockpit-bridge
+  - cockpit-system
+  - cockpit-ws
+  - geolite2-country
+  - sendmail
+  - gsettings-desktop-schemas
+  - PackageKit
+  - PackageKit-glib
+  - gdk-pixbuf2
+  - glib-networking
+  - json-glib
+  - libappstream-glib
+  - libmodman
+  - libproxy
+  - libsoup
+  - libstemmer
+  - cairo
+  - setroubleshoot-server
+  - abattis-cantarell-fonts
+  - cairo-gobject
+  - checkpolicy
+  - fontconfig
+  - fontpackages-filesystem
+  - libXrender
+  - pixman
+  - policycoreutils-python-utils
+  - python3-audit
+  - python3-cairo
+  - python3-gobject
+  - python3-libsemanage
+  - python3-policycoreutils
+  - python3-setools
+  - python3-systemd
+  - setroubleshoot-plugins

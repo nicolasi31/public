@@ -1,0 +1,18 @@
+$ORIGIN .
+$TTL 86400	; 1 day
+example.com		IN SOA	s128.example.com. root.example.com. (
+				2019061643 ; serial
+				3600       ; refresh (1 hour)
+				900        ; retry (15 minutes)
+				604800     ; expire (1 week)
+				86400      ; minimum (1 day)
+				)
+			NS	s128.example.com.
+$TTL 1800	; 30 minutes
+			MX	5 mail.example.com.
+$ORIGIN example.com.
+$TTL 300	; 5 minutes
+s128			A	192.168.0.252
+router			A	192.168.0.254
+zotac			A	192.168.0.2
+ux305			A	192.168.0.4

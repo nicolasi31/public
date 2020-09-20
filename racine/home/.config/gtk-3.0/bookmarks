@@ -1,0 +1,12 @@
+file:///home/myuser/Documents
+file:///home/myuser/Musique
+file:///home/myuser/Images
+file:///home/myuser/Vid%C3%A9os
+file:///home/myuser/T%C3%A9l%C3%A9chargements
+file:/// /
+file:///media/donnees/usenet Donnees/Usenet
+file:///home/myuser/nzb nzb
+sftp://myuser@myserver:22/media/donnees sftp://myserver/media/donnees 
+davs://myserver/remote.php/webdav davs://myserver
+smb://myispbox/disque%5C040dur/ Freebox SMB
+ftp://myispbox/ Freebox FTP

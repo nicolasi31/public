@@ -1,0 +1,44 @@
+- name: "{{ ansible_distribution }} - Users - Create {{ newuser }}"
+  user:
+    name: "{{ newuser }}"
+    password: "{{ newuserpw }}"
+    shell: /bin/bash
+    groups: "wheel"
+    append: yes
+  tags: [ alpine, users ]
+
+
+- name: "{{ ansible_distribution }} - Users - Create /home/{{ newuser }}/.ssh directory"
+  file:
+    path: "/home/{{ newuser }}/.ssh"
+    state: directory
+    mode: '0750'
+  tags: [ alpine, users, ssh ]
+
+
+- name: "{{ ansible_distribution }} - Users - Various commands"
+  shell: |
+    cp /root/.ssh/authorized_keys /home/{{ newuser }}/.ssh/
+    chown -R {{ newuser }}:users /home/{{ newuser }}/
+  args:
+    executable: /bin/sh
+  tags: [ alpine, users, ssh ]
+
+
+- name: "{{ ansible_distribution }} - Users - Change root shell"
+  lineinfile:
+    path: /etc/passwd
+    regexp: "^root:x:0:0:root:/root:/bin/ash"
+    line: root:x:0:0:root:/root:/bin/bash
+  tags: [ alpine, users ]
+
+
+- name: "{{ ansible_distribution }} - Users - sudo profile"
+  template:
+    src: "alpinesudouserfile"
+    dest: "/etc/sudoers.d/{{ newuser }}"
+    owner: root
+    group: root
+    mode: 0440
+  tags: [ alpine, users, sudo ]
+

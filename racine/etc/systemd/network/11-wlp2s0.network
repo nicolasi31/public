@@ -1,0 +1,15 @@
+[Match]
+Name=wl*
+
+[Network]
+LinkLocalAddressing=no
+DHCP=no
+#DHCP=ipv4
+#IPv6PrivacyExtensions=true
+## to use static IP uncomment these instead of DHCP
+#DNS=192.168.0.254
+#Address=192.168.0.12/24
+#Gateway=192.168.0.254
+#
+#[DHCPv4]
+#RouteMetric=20

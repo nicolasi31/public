@@ -1,0 +1,59 @@
+conky.config = {
+	background = true,
+
+	use_xft = true,
+--font = 'Bitstream Vera Sans Mono:size=10',
+--font = 'DejaVu Sans Mono:size=11',
+	font = 'Droid Sans Mono:size=11',
+
+	update_interval = 5.0,
+
+	total_run_times = 0,
+
+	own_window = true,
+	own_window_type = 'desktop',
+	own_window_transparent = true,
+	own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+
+	alignment = bl,
+	double_buffer = true,
+
+	minimum_width = 5,
+	minimum_height = 5,
+
+	draw_outline = false,
+	draw_borders = false,
+	stippled_borders = 0,
+	border_width = 0,
+
+	default_color = 'grey40',
+	default_shade_color = 'black',
+
+	maximum_width = 1438,
+
+	gap_x = 1,
+	gap_y = 1,
+
+	uppercase = true,
+
+	cpu_avg_samples = 2,
+	net_avg_samples = 2,
+
+	override_utf8_locale = false,
+
+	use_spacer = 'none',
+
+-- stuff after 'TEXT' will be formatted on screen
+
+};
+
+
+conky.text = [[
+${rss http://www.franceculture.fr/rss 10 item_titles 5}
+$stippled_hr
+${rss http://www.franceinfo.fr/rss.xml 10 item_titles 5}
+${stippled_hr}
+${tail /var/log/messages 5 1}
+$stippled_hr
+${tail /var/log/kern.log 5 1}
+]]

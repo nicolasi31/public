@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=SwitchAudio
+Comment=Switch Pulseaudio output
+Exec=bash -c 'if test `pacmd list-cards | grep -c active\ profile.*analog` == 1 ; then /usr/bin/pacmd set-card-profile 0 output:hdmi-stereo ; else /usr/bin/pacmd set-card-profile 0 output:analog-stereo ; fi'
+Icon=multimedia-volume-control
+Terminal=false
+Type=Application
+Categories=Perso;

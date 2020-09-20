@@ -1,0 +1,8 @@
+[Match]
+OriginalName=brwan
+Type=bridge
+
+[Link]
+Name=brwan
+RequiredForOnline=no
+#MTUBytes=1426

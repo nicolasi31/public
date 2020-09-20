@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=MPV Paste
+Keywords=Video;Perso;mpv;clipboard;
+#Exec=/usr/local/bin/mpvclipboard.sh
+Exec=bash -c 'if [ ${WAYLAND_DISPLAY} ] ; then  wl-paste | xargs mpv ; else xclip -o | xargs mpv ; fi'
+Type=Application
+Terminal=false
+Icon=mpv
+Categories=AudioVideo;Player;Recorder;Perso;MPV;ClipBoard;
+X-KDE-Protocols=ftp,http,https,mms,rtmp,rtsp,sftp,smb

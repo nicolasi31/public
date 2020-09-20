@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=TV
+Exec=/usr/bin/vlc -I qt /tmp/tv.m3u
+TryExec=/usr/bin/nvlc
+Icon=vlc
+Terminal=false
+Type=Application
+Categories=AudioVideo;Player;Recorder;Perso;
+X-KDE-Protocols=ftp,http,https,mms,rtmp,rtsp,sftp,smb
+Keywords=Player;Capture;DVD;Audio;Video;Server;Broadcast;Perso;freebox;vlc;iptv4sat;

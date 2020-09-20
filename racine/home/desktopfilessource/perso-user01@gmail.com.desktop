@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=user01@gmail.com
+GenericName=user01@gmail.com
+Keywords=folder;manager;explore;disk;filesystem;Perso;
+Exec=/usr/bin/nautilus -w google-drive://user01@gmail.com/
+Icon=org.gnome.Nautilus
+Terminal=false
+Type=Application
+DBusActivatable=true
+StartupNotify=true
+Categories=GNOME;GTK;Utility;Core;FileManager;Perso;RemoteAccess;
+X-GNOME-UsesNotifications=true

@@ -1,0 +1,9 @@
+- hosts:
+  - rtr
+  - srt
+#- hosts: all
+  roles:
+    - common
+
+#- import_playbook: rtr.yml
+

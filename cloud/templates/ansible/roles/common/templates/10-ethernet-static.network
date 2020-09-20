@@ -1,0 +1,21 @@
+[Match]
+Name={{ ansible_default_ipv4.alias }}
+
+[Network]
+LinkLocalAddressing=no
+DHCP=no
+Address={{ ansible_default_ipv4.address }}/{{ mask_cidr }}
+Gateway={{ ansible_default_ipv4.gateway }}
+#DNS={{ ansible_dns.nameservers[0] }}
+#DNS={{ ansible_dns.nameservers[1] }}
+#Domains={{ hostname.domain }}
+#NTP={{ ntp_server }}
+#Metric=10
+#LLDP=yes
+#IPForward=yes
+#ConfigureWithoutCarrier=yes
+
+#[Route]
+#Gateway=192.168.0.254
+#Destination=8.8.8.8/32
+

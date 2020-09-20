@@ -1,0 +1,13 @@
+[NetDev]
+Name=wg0
+Kind=wireguard
+
+[WireGuard]
+PrivateKey=MYPRIVATEKEY
+ListenPort=60001
+
+[WireGuardPeer]
+PublicKey=SERVER02PUBLICKEY
+AllowedIPs=192.168.60.0/24
+Endpoint=1.2.3.4:60001
+PersistentKeepalive = 25

@@ -1,0 +1,9 @@
+/var/log/nftables.log {
+        daily
+        missingok
+        rotate 10
+        compress
+        delaycompress
+        copytruncate
+        minsize 100k
+}

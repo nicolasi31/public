@@ -1,0 +1,14 @@
+deb https://mirrors.ircam.fr/pub/debian/           bullseye            main contrib non-free
+deb https://mirrors.ircam.fr/pub/debian/           bullseye-updates    main contrib non-free
+deb https://mirrors.ircam.fr/pub/debian/           bullseye-backports  main contrib non-free
+deb https://mirrors.ircam.fr/pub/debian-security/  bullseye-security   main contrib non-free
+
+# curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+#deb https://download.docker.com/linux/debian buster stable
+
+# wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+#deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main
+
+# GNS3
+#deb http://ppa.launchpad.net/gns3/ppa/ubuntu zesty main
+

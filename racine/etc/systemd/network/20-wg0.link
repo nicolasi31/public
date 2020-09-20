@@ -1,0 +1,7 @@
+[Match]
+OriginalName=wg0
+Type=wireguard
+
+[Link]
+Name=wg0
+RequiredForOnline=no

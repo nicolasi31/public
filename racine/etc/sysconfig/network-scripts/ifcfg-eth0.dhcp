@@ -1,0 +1,7 @@
+BOOTPROTO=dhcp
+DEVICE=eth0
+HWADDR=52:54:00:12:34:56
+ONBOOT=yes
+TYPE=Ethernet
+USERCTL=no
+

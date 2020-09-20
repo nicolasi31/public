@@ -1,0 +1,31 @@
+<network xmlns:dnsmasq='http://libvirt.org/schemas/network/dnsmasq/1.0' connections='1'>
+  <name>routed122</name>
+  <uuid>61b1576f-1eff-4c92-947f-febbf057ff33</uuid>
+  <forward mode='open'/>
+  <bridge name='virbr122' zone='libvirt' stp='on' delay='0' macTableManager='libvirt'/>
+  <mac address='52:54:00:aa:67:da'/>
+  <domain name='example.com'/>
+  <dns>
+    <forwarder addr='192.168.0.254'/>
+    <forwarder domain='dmz.example.com' addr='10.71.86.252'/>
+    <forwarder domain='kvm.example.com' addr='10.71.86.252'/>
+    <forwarder domain='example.com'/>
+    <host ip='192.168.122.1'>
+      <hostname>zotac</hostname>
+    </host>
+  </dns>
+  <ip address='192.168.122.1' netmask='255.255.255.0'>
+    <tftp root='/media/donnees/virtualisation/tftpboot'/>
+    <dhcp>
+      <range start='192.168.122.100' end='192.168.122.199'/>
+      <host mac='52:54:00:00:7a:65' name='centos8' ip='192.168.122.110'/>
+      <host mac='52:54:00:00:7a:66' name='debian10' ip='192.168.122.111'/>
+      <bootp file='bios/lpxelinux.0' server='192.168.122.1'/>
+    </dhcp>
+  </ip>
+  <dnsmasq:options>
+    <dnsmasq:option value='dhcp-option=option:ntp-server,195.83.132.135'/>
+    <dnsmasq:option value='dhcp-option=option:router,192.168.122.1'/>
+    <dnsmasq:option value='dhcp-option=6,8.8.8.8,1.1.1.1'/>
+  </dnsmasq:options>
+</network>

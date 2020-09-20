@@ -1,0 +1,7 @@
+[Match]
+#OriginalName=enp1s0
+Type=ether
+
+[Link]
+AutoNegotiation=1
+Name=enp1s0

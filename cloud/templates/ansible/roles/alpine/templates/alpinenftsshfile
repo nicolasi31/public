@@ -1,0 +1,6 @@
+table inet filter {
+        chain input {
+                tcp dport { 22, 80, 443 } accept \
+                comment "Accept SSH and WEB"
+        }
+}

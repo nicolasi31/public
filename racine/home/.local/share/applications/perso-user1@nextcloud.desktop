@@ -1,0 +1,19 @@
+[Desktop Entry]
+Name[fr]=user1@nextcloud.example.com
+Name=user1@nextcloud.example.com
+GenericName[fr]=user1@nextcloud.example.com
+GenericName=user1@nextcloud.example.com
+Comment[fr]=Accéder aux fichiers et les organiser
+Comment=Access and organize files
+Keywords[fr]=dossier;gestionnaire;explorer;disque;système de fichiers;Perso;
+Keywords=folder;manager;explore;disk;filesystem;Perso;
+Exec=/usr/bin/nautilus -w davs://user1@nextcloud.example.com/remote.php/webdav
+# Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+Icon=org.gnome.Nautilus
+Terminal=false
+Type=Application
+DBusActivatable=true
+StartupNotify=true
+Categories=GNOME;GTK;Utility;Core;FileManager;Perso;RemoteAccess;
+MimeType=inode/directory;application/x-7z-compressed;application/x-7z-compressed-tar;application/x-bzip;application/x-bzip-compressed-tar;application/x-compress;application/x-compressed-tar;application/x-cpio;application/x-gzip;application/x-lha;application/x-lzip;application/x-lzip-compressed-tar;application/x-lzma;application/x-lzma-compressed-tar;application/x-tar;application/x-tarz;application/x-xar;application/x-xz;application/x-xz-compressed-tar;application/zip;application/gzip;application/bzip2;
+X-GNOME-UsesNotifications=true

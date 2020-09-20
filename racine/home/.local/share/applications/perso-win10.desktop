@@ -1,0 +1,19 @@
+[Desktop Entry]
+Name=Win10 RDP
+Name[fr]=Win10 RDP
+Comment=Win10 RDP remote desktops
+Comment[fr]=Accéder au bureau distant Win10 via RDP
+Keywords=VNC;RDP;SSH;Perso;RemoteAccess;
+Keywords[fr]=VNC;RDP;SSH;Perso;RemoteAccess;
+#Exec=vinagre rdp://10.1.1.1
+Exec=remmina .local/share/remmina/remote_rdp_win10_10-1-1-1.remmina
+Icon=goa-account-msn
+Terminal=false
+MimeType=application/x-remote-connection;x-scheme-handler/vnc;
+Type=Application
+StartupNotify=true
+Categories=GNOME;GTK;Network;RemoteAccess;Perso;
+X-GNOME-Bugzilla-Bugzilla=GNOME
+X-GNOME-Bugzilla-Product=vinagre
+X-GNOME-Bugzilla-Component=general
+X-GNOME-Bugzilla-Version=3.22.0

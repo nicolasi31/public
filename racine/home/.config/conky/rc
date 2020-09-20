@@ -1,0 +1,123 @@
+conky.config = {
+	background = true,
+	alignment = 'bottom_right',
+	use_xft = true,
+	font = 'Bitstream Vera Sans Mono:size=10',
+        font = 'DejaVu Sans Mono:size=10',
+        font = 'Droid Sans Mono:size=10',
+--xftalpha = 0.8,
+
+--mpd_host = '127.0.0.1',
+--mpd_port = 6600,
+
+	update_interval = 5.0,
+
+	total_run_times = 0,
+
+	own_window = true,
+--own_window_argb_visual yes
+	own_window_type = 'override',
+	own_window_transparent = true,
+	own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+
+	double_buffer = true,
+
+	minimum_width = 280,
+	minimum_height = 499,
+
+--draw_shades = true,
+	draw_outline = false,
+	draw_borders = false,
+	stippled_borders = 0,
+--border_margin = 0,
+	border_width = 0,
+
+	default_color = 'grey40',
+	default_shade_color = 'black',
+--default_outline_color = 'gray',
+--color1 5b6dad
+--color2 7f8ed3
+
+--color1 = 'gray40',
+--color2 = 'gray60',
+--color3 = 'white',
+--color4 = 'black',
+
+	color1 = 'gray40',
+	color2 = 'gray44',
+
+	maximum_width = 341,
+
+--gap_x = 12,
+--gap_y = 12,
+gap_x = 1,
+gap_y = 1,
+
+	uppercase = false,
+
+	cpu_avg_samples = 2,
+	net_avg_samples = 2,
+
+	override_utf8_locale = false,
+
+	use_spacer = 'none',
+
+-- stuff after 'TEXT' will be formatted on screen
+
+--${color1}$stippled_hr
+--${color1}MPD: ${color2}${alignc}$mpd_artist - $mpd_title
+--${color2}$mpd_bar
+--${color2}${alignc}$mpd_status
+--${font Droid Sans Mono:size=8}${font}
+--${color1}CPU1 ${cpugraph cpu1 16,109 ivory ${color2} -t -l}${tab} CPU2 ${color1}${cpugraph cpu2 16,109 ivory ${color2} -t -l}
+--${color1}CPU3 ${cpugraph cpu3 16,109 ivory ${color2} -t -l}${tab} CPU4 ${color1}${cpugraph cpu4 16,109 ivory ${color2} -t -l}
+--${color1}CPU5 ${cpugraph cpu5 16,109 ivory ${color2} -t -l}${tab} CPU6 ${color1}${cpugraph cpu6 16,109 ivory ${color2} -t -l}
+--${color1}CPU7 ${cpugraph cpu7 16,109 ivory ${color2} -t -l}${tab} CPU8 ${color1}${cpugraph cpu8 16,109 ivory ${color2} -t -l}
+--${color2}${tail /var/log/kern.log 6 30}
+--${color1}Battery:${color2} ${battery_short BAT0} ${battery_time BAT0} ${battery_bar BAT0}
+--${tail /var/log/syslog 5 1}
+--${scroll 45 10 ${tail /var/log/Xorg.0.log 1 1} }
+
+};
+
+conky.text = [[
+${font Droid Sans Mono:size=31}${color1}${alignc}$nodename
+${font Droid Sans Mono:size=20}${color1}${alignc}linux-$kernel
+${font Droid Sans Mono:size=20}${color1}${alignc}Uptime:${color2} $uptime
+${font Droid Sans Mono:size=18}${color1}${alignc}Load:${color2} $loadavg${font}
+$stippled_hr
+${color1}Battery:${color2} ${font Droid Sans Mono:size=20}${battery_short BAT0} ${battery_time BAT0}${font}
+$stippled_hr
+${font Droid Sans Mono:size=14}${color1}CPU1 Freq:${color2} $freq_g(1) ${color1}${tab}Usage:${color2} ${cpu cpu1}
+${color1}CPU2 Freq:${color2} $freq_g(2) ${color1}${tab}Usage:${color2} ${cpu cpu2}
+${color1}CPU3 Freq:${color2} $freq_g(3) ${color1}${tab}Usage:${color2} ${cpu cpu3}
+${color1}CPU4 Freq:${color2} $freq_g(4) ${color1}${tab}Usage:${color2} ${cpu cpu4}${font}
+${color1}${cpugraph cpu1 31,83 ivory ${color2} -t -l}${cpugraph cpu2 31,83 ivory ${color2} -t -l}${cpugraph cpu3 31,83 ivory ${color2} -t -l}${cpugraph cpu4 31,83 ivory ${color2} -t -l}${font}
+${font Droid Sans Mono:size=13}${color1}RAM Usage:${color2} $mem${tab}/${tab}$memmax${alignr}$memperc%
+${color1}SWP Usage:${color2} $swap${tab}/${tab}$swapmax${alignr}$swapperc%${font}
+$stippled_hr
+${color1}Processes:${color2} $processes  ${color1}Running:${color2} $running_processes
+${color1}Name${tab 75}PID${tab 103}CPU%${tab 64}MEM%
+${color2} ${top name 1}${tab}${tab}${tab}${top pid 1}${tab}${tab}${top cpu 1}${tab}${top mem 1}
+${color2} ${top name 2}${tab}${tab}${tab}${top pid 2}${tab}${tab}${top cpu 2}${tab}${top mem 2}
+${color2} ${top name 3}${tab}${tab}${tab}${top pid 3}${tab}${tab}${top cpu 3}${tab}${top mem 3}
+${color1}Mem usage
+${color2} ${top_mem name 1}${tab}${tab}${tab}${top_mem pid 1}${tab}${tab}${top_mem cpu 1}${tab}${top_mem mem 1}
+${color2} ${top_mem name 2}${tab}${tab}${tab}${top_mem pid 2}${tab}${tab}${top_mem cpu 2}${tab}${top_mem mem 2}
+${color2} ${top_mem name 3}${tab}${tab}${tab}${top_mem pid 3}${tab}${tab}${top_mem cpu 3}${tab}${top_mem mem 3}
+$stippled_hr
+${color1}Networking:
+${font Droid Sans Mono:size=14}${color1}Down:${color2} ${downspeed wlan0}/s${alignr}${color1}Up:${color2} ${upspeed wlan0}/s
+${downspeedgraph wlan0 31,166 ivory ${color2}}${upspeedgraph wlan0 31,166 ivory ${color2}}
+$stippled_hr${font}
+${color1}Port(s):${color2} ${tcp_portmon 1 65535 count}
+${color1}Connections${tab 80}RPort${tab 80}LPort
+${color2} ${tcp_portmon 1 65535 rip 0}${tab 80}${tcp_portmon 1 65535 rport 0}${tab 80}${tcp_portmon 1 65535 lport 0}
+${color2} ${tcp_portmon 1 65535 rip 1}${tab 80}${tcp_portmon 1 65535 rport 1}${tab 80}${tcp_portmon 1 65535 lport 1}
+${color2} ${tcp_portmon 1 65535 rip 2}${tab 80}${tcp_portmon 1 65535 rport 2}${tab 80}${tcp_portmon 1 65535 lport 2}
+${color2} ${tcp_portmon 1 65535 rip 3}${tab 80}${tcp_portmon 1 65535 rport 3}${tab 80}${tcp_portmon 1 65535 lport 3}
+${color2} ${tcp_portmon 1 65535 rip 4}${tab 80}${tcp_portmon 1 65535 rport 4}${tab 80}${tcp_portmon 1 65535 lport 4}
+$stippled_hr
+${font Droid Sans Mono:size=20}${color1}${alignc}${time %a %d %b %Y}${font}
+${font Droid Sans Mono:size=46}${color2}${alignc}${time %H:%M:%S}${font}
+]];

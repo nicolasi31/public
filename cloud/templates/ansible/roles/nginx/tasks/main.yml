@@ -1,0 +1,18 @@
+- name: "NGINX - PACKAGES - install"
+  package:
+    name: nginx
+    state: present
+  tags: [ nginx, packages ]
+
+- name: "NGINX - {{ ansible_distribution }} - Dedicated Tasks"
+  include_tasks: "{{ ansible_distribution }}_nginx.yml"
+  tags: [ nginx, centos, debian ]
+
+- name: "PHP - {{ ansible_distribution }} - Dedicated Tasks"
+  include_tasks: "{{ ansible_distribution }}_php.yml"
+  tags: [ never, php, centos, debian ]
+
+- name: "PGSQL - {{ ansible_distribution }} - Dedicated Tasks"
+  include_tasks: "{{ ansible_distribution }}_pgsql.yml"
+  tags: [ never, pgsql, centos, debian ]
+

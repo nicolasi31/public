@@ -1,0 +1,70 @@
+- name: "Common - Download - Download perso conf files"
+  get_url:
+    url: "{{ gitlaburl }}/racine/home/{{item}}"
+    dest: "/home/{{ newuser }}/{{item}}"
+    mode: "0650"
+  with_items:
+    - "{{ persoconffiles }}"
+  tags: [ common, download ]
+
+################################################################################
+
+- name: "Common - Download - Update root {{ profilefile }}"
+  blockinfile:
+    path: /root/{{ profilefile }}
+    block: |
+      # MYOWNSCRIPTSBEGIN
+      if [ -d /home/{{ newuser }}/.profile.d ]; then
+       for i in /home/{{ newuser }}/.profile.d/*.sh; do
+        if [ -r $i ]; then
+         . $i
+        fi
+       done
+       unset i
+      fi
+      # MYOWNSCRIPTSEND
+  tags: [ common, download ]
+
+- name: "Common - Download - Update {{ newuser }} {{ profilefile }}"
+  blockinfile:
+    path: "/home/{{ newuser }}/{{ profilefile }}"
+    block: |
+      # MYOWNSCRIPTSBEGIN
+      if [ -d ${HOME}/.profile.d ]; then
+       for i in ${HOME}/.profile.d/*.sh; do
+        if [ -r $i ]; then
+         . $i
+        fi
+       done
+       unset i
+      fi
+      # MYOWNSCRIPTSEND
+  tags: [ common, download ]
+
+################################################################################
+
+- name: "Common - Download - Create {{ newuser }} .profile.d directory"
+  file:
+    path: "/home/{{ newuser }}/.profile.d"
+    state: directory
+    mode: '0750'
+  tags: [ common, download ]
+
+################################################################################
+
+- name: "Common - Download - Download perso scripts"
+  get_url:
+    url: "{{ gitlaburl }}/racine/home/.profile.d/{{item}}"
+    dest: "/home/{{ newuser }}/.profile.d/{{item}}"
+    mode: "0750"
+  with_items:
+    - "{{ persoscripts }}"
+  tags: [ common, download ]
+
+
+################################################################################
+
+- name: "Common - Download - Chown {{ newuser }} home"
+  file: dest="/home/{{ newuser }}" owner="{{ newuser }}" group=users recurse=yes
+  tags: [ common, download ]
+

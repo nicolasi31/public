@@ -1,0 +1,18 @@
+- name: "{{ ansible_distribution }} - Network - Update NTP options"
+  replace:
+    dest: /etc/default/ntp
+    regexp: '^NTPD_OPTS=.-g.$'
+    replace: 'NTPD_OPTS="-g -I lo -4"'
+  tags: [ debian, network, ntp ]
+
+- name: "{{ ansible_distribution }} - Network - Update NTP configuration file"
+  replace:
+    dest: /etc/ntp.conf
+    regexp: '^#server ntp.your-provider.example$'
+    replace: 'server {{ ntp_server }}'
+  tags: [ debian, network, ntp ]
+
+- name: "{{ ansible_distribution }} - Network - restart ntp"
+  service: name=ntp state=restarted
+  tags: [ debian, network, ntp ]
+

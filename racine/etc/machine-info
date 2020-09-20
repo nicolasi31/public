@@ -1,0 +1,4 @@
+ICON_NAME=computer
+CHASSIS=server
+DEPLOYMENT=production
+LOCATION="Toulouse, France"

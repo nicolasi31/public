@@ -1,0 +1,34 @@
+ansible_python_interpreter: /usr/bin/python3
+
+useradditionalgroups: "sudo"
+
+profilefile: ".profile"
+
+nftablesconffile: "/etc/nftables.conf"
+
+debstoinstall:
+  - screen
+  - haveged
+  - htop
+  - iftop
+  - ethtool
+
+debstoremove:
+  - cloud-init
+  - locales
+  - locales-all
+
+aptsourcesadd:
+  - "deb {{ linuxmirror }}/debian/          buster           main contrib non-free"
+  - "deb {{ linuxmirror }}/debian/          buster-updates   main contrib non-free"
+  - "deb {{ linuxmirror }}/debian/          buster-backports main contrib non-free"
+  - "deb {{ linuxmirror }}/debian-security/ buster/updates   main contrib non-free"
+
+aptsourcesdel:
+  - "deb http://deb.debian.org/debian/ buster main"
+  - "deb-src http://deb.debian.org/debian/ buster main"
+  - "deb http://deb.debian.org/debian/ buster-updates main"
+  - "deb-src http://deb.debian.org/debian/ buster-updates main"
+  - "deb http://security.debian.org/debian-security buster/updates main"
+  - "deb-src http://security.debian.org/debian-security buster/updates main"
+

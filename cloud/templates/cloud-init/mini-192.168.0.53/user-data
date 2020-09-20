@@ -1,0 +1,87 @@
+#cloud-config
+
+preserve_hostname: False
+hostname: mini
+
+#manage_resolv_conf: true
+
+locale: C
+
+resize_rootfs: False
+
+users:
+  - name: admin
+# 'mkpasswd --method=SHA-512 --rounds=4096' to generate the password.
+    passwd: $6$rounds=4096$l/WTJNx/13lUYHnc$sythlAWskDmLPwe7DVvQXaH3PzTVyiwutwxKN1hD9id6NHAfIxqnEqPp00YDoqKYLN46/DuiYvVTvW/Peisrn1
+    lock-passwd: false
+    primary-group: users
+    groups: wheel
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAApubkey user01@server01
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAABpubkey user02@server02
+  - name: root
+    passwd: $6$rounds=4096$l/WTJNx/13lUYHnc$sythlAWskDmLPwe7DVvQXaH3PzTVyiwutwxKN1hD9id6NHAfIxqnEqPp00YDoqKYLN46/DuiYvVTvW/Peisrn1
+    lock-passwd: false
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAApubkey user01@server01
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAABpubkey user02@server02
+
+unverified_modules: ['ssh-import-id']
+ssh_svcname: ssh
+ssh_deletekeys: True
+ssh_genkeytypes: ['rsa', 'ecdsa']
+ssh_pwauth: True
+
+power_state:
+ mode: reboot
+
+output:
+ init: "> /var/log/cloud-init.log"
+ config: [ ">> /var/log/mini.out", ">> /var/log/mini.err" ]
+ final:
+   output: "| tee /var/log/mini-final.stdout"
+   error: "&1"
+
+packages:
+ - wget
+ - curl
+ - bash-completion
+ - psmisc
+
+bootcmd:
+  - modprobe virtio_net
+  - sed -i '/iface eth/d' /etc/network/interfaces
+  - sed -i 's/^allow-hotplug eth0$/auto eth0/' /etc/network/interfaces
+  - sed -i 's/^ONBOOT=no$/ONBOOT=yes/' /etc/sysconfig/network-scripts/ifcfg-eth0
+# 'openssl passwd' to generate the password.
+  - usermod -p Ki2BQClv1hLu6 root
+
+runcmd:
+  - timedatectl set-timezone Europe/Paris
+#  - ip addr | grep inet\  | grep -v 127.0.0.1 | cut -d\  -f6 >> /etc/issue
+  - echo === ssh config ===
+  - sed -i "s/^#AddressFamily any$/AddressFamily inet/" /etc/ssh/sshd_config
+  - sed -i "s/^PasswordAuthentication no$/PasswordAuthentication yes/" /etc/ssh/sshd_config
+  - sed -i "s/^#UseDNS yes$/UseDNS no/" /etc/ssh/sshd_config
+  - /bin/echo -e "\nPermitRootLogin prohibit-password" >> /etc/ssh/sshd_config
+  - systemctl restart sshd
+  - echo === selinux ===
+  - sed -i "s/^SELINUX=enforcing$/SELINUX=disabled/" /etc/sysconfig/selinux
+  - setenforce 0
+  - echo === syslinux ===
+  - |
+   echo "net.ipv6.conf.all.disable_ipv6 = 0
+   net.ipv6.conf.default.disable_ipv6 = 1
+   net.ipv6.conf.lo.disable_ipv6 = 0
+   net.ipv6.conf.eth0.disable_ipv6 = 1
+   kernel.hostname = mini
+   #kernel.domainname = mydomain.org" >> /etc/sysctl.conf
+  - sysctl -p
+  - echo === disabling cloud-init ===
+  - systemctl disable cloud-init.service ; systemctl mask cloud-init.service ; systemctl disable cloud-init-local.service ; systemctl mask cloud-init-local.service ; systemctl disable cloud-init.target
+  - chown -R admin:users /home/admin
+  - wget -O /root/cloud-init-custom.sh https://gitlab.com/nicolasi31/public/-/raw/master/cloud/templates/cloud-init/cloud-init-custom.sh
+  - chmod +x /root/cloud-init-custom.sh
+  - [ bash, "/root/cloud-init-custom.sh" ]

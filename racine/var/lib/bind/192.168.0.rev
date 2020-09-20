@@ -1,0 +1,16 @@
+$ORIGIN .
+$TTL 172800	; 2 days
+0.168.192.IN-ADDR.ARPA	IN SOA	s128.example.com. root.example.com. (
+				2018080854 ; serial
+				10800      ; refresh (3 hours)
+				900        ; retry (15 minutes)
+				1814400    ; expire (3 weeks)
+				10800      ; minimum (3 hours)
+				)
+			NS	s128.example.com.
+$ORIGIN 0.168.192.IN-ADDR.ARPA.
+100			PTR	server01.example.com.
+252			PTR	s128.example.com.
+254			PTR	router.example.com.
+2			PTR	zotac.example.com.
+4			PTR	ux305.example.com.

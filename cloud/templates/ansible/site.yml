@@ -1,0 +1,10 @@
+- hosts:
+  - centos_hosts
+  - debian_hosts
+#- hosts: all
+  roles:
+    - common
+
+#- import_playbook: centos_hosts.yml
+#- import_playbook: debian_hosts.yml
+

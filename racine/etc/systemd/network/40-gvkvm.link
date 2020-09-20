@@ -1,0 +1,7 @@
+[Match]
+OriginalName=gvkvm
+Type=geneve
+
+[Link]
+Name=gvkvm
+RequiredForOnline=no

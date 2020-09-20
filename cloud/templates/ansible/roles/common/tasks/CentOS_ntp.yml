@@ -1,0 +1,16 @@
+- name: "{{ ansible_distribution }} - Network - Update NTP options"
+  replace:
+    dest: /etc/sysconfig/chronyd
+    regexp: '^OPTIONS=..$'
+    replace: 'OPTIONS="-4"'
+  tags: [ centos, network, ntp ]
+
+- name: "{{ ansible_distribution }} - Network - Update NTP server"
+  lineinfile:
+    path: /etc/chrony.conf
+    regexp: '^server {{ ntp_server }}'
+    insertbefore: 'pool 2.centos.pool.ntp.org iburst'
+    line: 'server {{ ntp_server }} iburst'
+  notify:
+  - restart chronyd
+  tags: [ centos, network, ntp ]
