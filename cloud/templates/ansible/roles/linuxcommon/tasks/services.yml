@@ -1,0 +1,13 @@
+---
+- name: "Common - Services - Ensure services are started and enabled"
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+    masked: no
+    state: started
+    daemon_reload: yes
+  with_items:
+  - postfix
+  - rsyslog
+  tags: [ common, services, systemd ]
+

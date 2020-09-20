@@ -1,0 +1,35 @@
+---
+- name: "Common - Sysctl - Disable ip forwarding"
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '0'
+    sysctl_set: yes
+    state: present
+  tags: [ common, sysctl ]
+
+
+- name: "Common - Sysctl - Update hostname"
+  sysctl:
+    name: kernel.hostname
+    value: '{{ hostname.short }}'
+    sysctl_set: yes
+    state: present
+  tags: [ common, sysctl ]
+
+- name: "Common - Sysctl - Update domainname"
+  sysctl:
+    name: kernel.domainname
+    value: '{{ hostname.domain }}'
+    sysctl_set: yes
+    state: present
+  tags: [ common, sysctl ]
+
+- name: "Common - Sysctl - Disable IPv6 on eth0"
+  sysctl:
+    name: net.ipv6.conf.eth0.disable_ipv6
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+  tags: [ common, sysctl ]
+

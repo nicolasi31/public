@@ -1,0 +1,16 @@
+---
+- name: "{{ ansible_distribution }} - Network - Set DHCP IP"
+  shell: |
+    export NMCLI_INTF="{{ ansible_default_ipv4.alias }}"
+    /bin/echo -e "auto lo
+    iface lo inet loopback
+    allow-hotplug ${NMCLI_INTF}
+    iface ${NMCLI_INTF} inet dhcp
+     post-up ip link set dev {{ ansible_default_ipv4.alias }} mtu {{ mtu }}
+    " > /etc/network/interfaces
+    ifdown ${NMCLI_INTF}
+    ifup   ${NMCLI_INTF}
+  args:
+    executable: /bin/bash
+  tags: [ debian, never, dhcp ]
+

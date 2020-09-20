@@ -1,0 +1,23 @@
+---
+- name: "Common - Postfix - Disable IPv6"
+  lineinfile:
+    path: /etc/postfix/main.cf
+    regexp: "^#?inet_protocols"
+    line: inet_protocols=ipv4
+  tags: [ common, postfix ]
+
+- name: "Common - Postfix - Update hostname"
+  lineinfile:
+    path: /etc/postfix/main.cf
+    regexp: "^#?myhostname"
+    line: myhostname={{ hostname.short }}
+  tags: [ common, postfix ]
+
+- name: "Common - Postfix - Update domain"
+  lineinfile:
+    path: /etc/postfix/main.cf
+    regexp: "^#?mydomain"
+    line: mydomain={{ hostname.domain }}
+  tags: [ common, postfix ]
+  notify:
+  - restart postfix

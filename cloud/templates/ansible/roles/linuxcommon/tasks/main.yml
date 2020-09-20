@@ -1,0 +1,113 @@
+---
+- name: "Common - Dedicated Vars"
+  include_vars:
+    file: "{{ ansible_distribution }}_vars.yml"
+  tags: [ centos, debian, packages, download, etckeeper, firewall, network, nftables, ntp, resolved, selinux, sshdcerts, sshd, sudo, timesyncd, upgrade, staticip, dhcp, mtu, users ]
+
+- name: "Common - Backup"
+  include_tasks: backup.yml
+  tags: [ common, backup ]
+
+- name: "Common - Get Facts"
+  include_tasks: getfacts.yml
+  tags: [ common, resolved, timesyncd ]
+
+- name: "Common - Hostname"
+  include_tasks: hostname.yml
+  tags: [ common, hostname ]
+
+- name: "Common - Users"
+  include_tasks: users.yml
+  tags: [ common, users ]
+
+- name: "Common - Sysctl"
+  include_tasks: sysctl.yml
+  tags: [ common, sysctl ]
+
+- name: "Common - Sudo"
+  include_tasks: "{{ ansible_distribution }}_sudo.yml"
+  tags: [ debian, centos, sudo ]
+
+- name: "Common - Repos"
+  include_tasks: "{{ ansible_distribution }}_repos.yml"
+  tags: [ debian, centos, packages ]
+
+- name: "Common - Common Packages"
+  include_tasks: packages.yml
+  tags: [ common, packages ]
+
+- name: "Common - Distrib specific Packages"
+  include_tasks: "{{ ansible_distribution }}_packages.yml"
+  tags: [ debian, centos, packages, upgrade ]
+
+- name: "Common - Installed package list"
+  include_tasks: "package_facts.yml"
+  tags: [ debian, centos, packages, etckeeper, firewall, upgrade ]
+
+- name: "Common - Net Static"
+  include_tasks: "{{ ansible_distribution }}_net_static.yml"
+  tags: [ debian, centos, network, staticip ]
+
+- name: "Common - Net DHCP"
+  include_tasks: "{{ ansible_distribution }}_net_dhcp.yml"
+  tags: [ debian, centos, network, dhcp ]
+
+- name: "Common - TimeZone"
+  include_tasks: "timezone.yml"
+  tags: [ common, timezone ]
+
+- name: "Common - NTP"
+  include_tasks: "{{ ansible_distribution }}_ntp.yml"
+  tags: [ debian, centos, network, ntp ]
+
+- name: "Common - NFtables Firewall"
+  include_tasks: nftables.yml
+  tags: [ common, nftables ]
+
+- name: "Common - Systemd-resolved"
+  include_tasks: resolved.yml
+  tags: [ common, resolved ]
+
+- name: "Common - Systemd-timesyncd"
+  include_tasks: timesyncd.yml
+  tags: [ common, timesyncd ]
+
+- name: "Common - Systemd-journald"
+  include_tasks: journald.yml
+  tags: [ common, journald, systemd ]
+
+- name: "Common - Postfix"
+  include_tasks: postfix.yml
+  tags: [ common, postfix ]
+
+- name: "Common - SSHD"
+  include_tasks: sshd.yml
+  tags: [ common, sshd ]
+
+- name: "Common - LogRotate"
+  include_tasks: logrotate.yml
+  tags: [ common, logrotate ]
+
+- name: "Common - Rsyslog"
+  include_tasks: rsyslog.yml
+  tags: [ common, rsyslog ]
+
+- name: "Common - Services"
+  include_tasks: services.yml
+  tags: [ common, services ]
+
+- name: "Common - Banner"
+  include_tasks: banner.yml
+  tags: [ common, banner ]
+
+- name: "Common - INIT - Dedicated Tasks"
+  include_tasks: "{{ ansible_distribution }}_main.yml"
+  tags: [ centos, debian, packages, etckeeper, firewall, network, ntp, selinux, sudo, sshdcerts, sshd, upgrade, staticip, dhcp, mtu ]
+
+- name: "Common - Download"
+  include_tasks: download.yml
+  tags: [ common, download ]
+
+- name: "Common - Get Facts"
+  include_tasks: getfacts.yml
+  tags: common

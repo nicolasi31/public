@@ -1,0 +1,4 @@
+---
+- name: "{{ ansible_distribution }} - OpenSSH"
+  include_tasks: "{{ ansible_distribution }}_openssh.yml"
+  tags: [ debian, sshdcerts ]

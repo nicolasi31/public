@@ -1,0 +1,28 @@
+---
+- name: "{{ ansible_distribution }} - Network - Set Static IP"
+  shell: |
+    export NMCLI_INTF="{{ ansible_default_ipv4.alias }}"
+    export NMCLI_IPADDR=$(ip add show ${NMCLI_INTF} | grep "inet " | tr -s " " | cut -d " " -f3 | cut -d "/" -f1)
+    export NMCLI_PREFIX=$(ip add show ${NMCLI_INTF} | grep "inet " | tr -s " " | cut -d " " -f3 | cut -d "/" -f2)
+    export NMCLI_GATEWAY=$(ip route show default | cut -d\  -f3)
+    export NMCLI_DNS1=$(cat /etc/resolv.conf | grep ^nameserver | head -n1 | cut -d\  -f2)
+    export NMCLI_DNS2=$(cat /etc/resolv.conf | grep ^nameserver | head -n2 | tail -n1 | cut -d\  -f2)
+    # export NMCLI_DOMAIN=$(cat /etc/resolv.conf | grep ^search | cut -d\  -f2)
+    export NMCLI_DOMAIN=$(sysctl kernel.domainname | cut -d " " -f 3)
+    /bin/echo -e "auto lo
+    iface lo inet loopback
+    allow-hotplug ${NMCLI_INTF}
+    iface ${NMCLI_INTF} inet static
+     address ${NMCLI_IPADDR}/${NMCLI_PREFIX}
+     gateway ${NMCLI_GATEWAY}
+     dns-nameservers ${NMCLI_DNS1} ${NMCLI_DNS2}
+     dns-domain ${NMCLI_DOMAIN}
+     dns-search ${NMCLI_DOMAIN}
+     mtu {{ mtu }}
+    " > /etc/network/interfaces
+    ifdown ${NMCLI_INTF}
+    ifup   ${NMCLI_INTF}
+  args:
+    executable: /bin/bash
+  tags: [ debian, never, staticip ]
+

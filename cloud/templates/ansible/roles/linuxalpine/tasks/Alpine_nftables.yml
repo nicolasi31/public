@@ -1,0 +1,17 @@
+---
+- name: "{{ ansible_distribution }} - NFtables - Accept SSH and WEB"
+  template:
+    src: "alpinenftsshfile.j2"
+    dest: "/etc/nftables.d/01-ssh-and-web.nft"
+    owner: root
+    group: root
+    mode: 0644
+  tags: [ alpine, network, nftables ]
+
+- name: "{{ ansible_distribution }} - NFtables - reload"
+  service:
+    name=nftables
+    enabled=yes
+    state=restarted
+  tags: [ alpine, network, nftables ]
+

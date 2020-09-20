@@ -1,6 +1,6 @@
 **Table of Content**
 
-[TOC]
+[[_TOC_]]
 
 ----
 

@@ -1,0 +1,9 @@
+---
+- name: "PGSQL - {{ ansible_distribution }} - Packages install"
+  package:
+    name:
+      - postgresql
+      - postgresql-server
+    state: present
+  tags: [ pgsql, packages ]
+

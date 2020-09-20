@@ -1,0 +1,48 @@
+---
+- name: "NGINX - {{ ansible_distribution }} - Backup /etc/nginx/nginx.conf"
+  archive:
+    path: /etc/nginx/nginx.conf
+    dest: nginx.conf.{{ ansible_date_time.iso8601_basic_short }}.org.gz
+    format: gz
+  tags: [ common, centos, archive ]
+
+- name: "NGINX - {{ ansible_distribution }} - Create SSL directory"
+  file:
+    path: "/etc/pki/nginx/private"
+    state: directory
+    mode: 02755
+  tags: [ nginx, centos, ssl ]
+
+- name: "NGINX - {{ ansible_distribution }} - Generate Certificate"
+  command : openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/pki/nginx/private/server.key -out /etc/pki/nginx/server.crt -subj "/C=FR/ST=OCCITANIE/L=TOULOUSE/CN={{ hostname.short }}.{{ hostname.domain }}"
+  tags: [ nginx, centos, ssl ]
+
+- name: "NGINX - {{ ansible_distribution }} - Create passwd directory"
+  file:
+    path: "/etc/nginx/passwd"
+    state: directory
+    mode: 02755
+
+- name: "NGINX - {{ ansible_distribution }} - Passwd file import"
+  template:
+    src: "{{ ansible_distribution }}_nginx_passwd.j2"
+    dest: "/etc/nginx/passwd/passwd"
+    owner: nginx
+    group: nginx
+    mode: 0640
+  tags: [ nginx, debian, config ]
+
+- name: "NGINX - {{ ansible_distribution }} - Config import"
+  template:
+    src: "{{ ansible_distribution }}_nginx.conf.j2"
+    dest: /etc/nginx/nginx.conf
+  tags: [ nginx, centos, config ]
+  notify:
+  - restart nginx
+
+- name: "PHP - {{ ansible_distribution }} - index.html import"
+  template:
+    src: "{{ ansible_distribution }}_nginx_index.html.j2"
+    dest: "{{ nginxwebroot }}/index.html"
+  tags: [ nginx, centos ]
+

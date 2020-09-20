@@ -1,0 +1,44 @@
+---
+- name: "NGINX - {{ ansible_distribution }} - Backup /etc/nginx/nginx.conf"
+  archive:  
+    path: "/etc/nginx/sites-available/{{ nginxconffile }}"
+    dest: "{{ nginxconffile }}.{{ ansible_date_time.iso8601_basic_short }}.org.gz"
+    format: gz
+  tags: [ common, debian, archive ]
+
+- name: "NGINX - {{ ansible_distribution }} - Config import"
+  template:
+    src: "{{ ansible_distribution }}_nginx.conf.j2"
+    dest: "/etc/nginx/sites-available/{{ nginxconffile }}"
+  tags: [ nginx, debian, config ]
+
+- name: "NGINX - {{ ansible_distribution }} - Delete default symlink"
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  tags: [ nginx, debian, config ]
+
+- name: "NGINX - {{ ansible_distribution }} - Create passwd directory"
+  file:
+    path: "/etc/nginx/passwd"
+    state: directory
+    mode: 02755
+
+- name: "NGINX - {{ ansible_distribution }} - Passwd file import"
+  template:
+    src: "{{ ansible_distribution }}_nginx_passwd.j2"
+    dest: "/etc/nginx/passwd/passwd"
+    owner: www-data
+    group: www-data
+    mode: 0640
+  tags: [ nginx, debian, config ]
+
+- name: "NGINX - {{ ansible_distribution }} - create new config symlink"
+  file:
+    src: "/etc/nginx/sites-available/{{ nginxconffile }}"
+    dest: "/etc/nginx/sites-enabled/{{ nginxconffile }}"
+    state: link
+  tags: [ nginx, debian, config ]
+  notify:
+  - restart nginx
+

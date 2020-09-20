@@ -1,0 +1,23 @@
+---
+- name: "PHP - {{ ansible_distribution }} - Packages install"
+  package:
+    name:
+      - php-fpm.x86_64
+      - php-pgsql.x86_64
+    state: present
+  tags: [ php, packages ]
+
+- name: "PHP - {{ ansible_distribution }} - Upload index.php"
+  template:
+    src: "{{ ansible_distribution }}_nginx_index.php.j2"
+    dest: "{{ nginxwebroot }}/index.php"
+  tags: [ php, centos, config ]
+
+- name: "PHP - {{ ansible_distribution }} - Upload style.css"
+  template:
+    src: "{{ ansible_distribution }}_nginx_style.css.j2"
+    dest: "{{ nginxwebroot }}/style.css"
+  tags: [ php, centos, config ]
+  notify:
+  - restart nginx
+

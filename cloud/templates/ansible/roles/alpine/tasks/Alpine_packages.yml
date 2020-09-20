@@ -1,5 +1,0 @@
-- name: "{{ ansible_distribution }} - Packages - add common packages"
-  package:
-    name: "{{ commonpackages }}"
-    state: present
-  tags: [ alpine, packages ]

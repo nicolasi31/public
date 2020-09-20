@@ -1,0 +1,7 @@
+---
+- name: "Common - Packages - Add common packages"
+  package:
+    name: "{{ commonpackages }}"
+    state: present
+  tags: [ common, packages ]
+

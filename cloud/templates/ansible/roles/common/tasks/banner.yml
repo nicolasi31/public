@@ -1,8 +1,0 @@
-- name: "Common - Banner - Upload"
-  template:
-    src: "motd"
-    dest: "/etc/motd"
-    owner: root
-    group: root
-    mode: 0644
-  tags: [ common, banner ]

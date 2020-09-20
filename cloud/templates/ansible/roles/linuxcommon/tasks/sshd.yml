@@ -1,0 +1,24 @@
+---
+- name: "Common - SSHD - Disable IPv6"
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?AddressFamily"
+    line: AddressFamily inet
+  tags: [ common, sshd ]
+
+- name: "Common - SSHD - Disable DNS"
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?UseDNS"
+    line: UseDNS no
+  tags: [ common, sshd ]
+
+- name: "Common - SSHD - Disable password root login"
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?PermitRootLogin"
+    line: PermitRootLogin prohibit-password
+  tags: [ common, sshd ]
+  notify:
+  - restart sshd
+

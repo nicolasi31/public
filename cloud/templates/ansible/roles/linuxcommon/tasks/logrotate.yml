@@ -1,0 +1,18 @@
+---
+- name: "Common - LogRotate - nftables configuration"
+  blockinfile:
+    path: /etc/logrotate.d/nftables
+    create: yes
+    block: |
+      /var/log/nftables.log {
+              daily
+              missingok
+              rotate 10
+              compress
+              delaycompress
+              copytruncate
+              minsize 100k
+      }
+  tags: [ common, logrotate ]
+  notify:
+  - restart logrotate

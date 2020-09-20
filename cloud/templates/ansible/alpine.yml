@@ -1,5 +1,6 @@
+---
 - hosts:
   - alpine_hosts
   roles:
-    - alpine
+    - linuxalpine
 

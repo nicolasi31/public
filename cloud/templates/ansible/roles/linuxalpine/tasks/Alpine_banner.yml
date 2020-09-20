@@ -1,0 +1,9 @@
+---
+- name: "{{ ansible_distribution }} - Banner - Update"
+  template:
+    src: "alpinemotdfile.j2"
+    dest: "/etc/motd"
+    owner: root
+    group: root
+    mode: 0644
+  tags: [ alpine, banner ]

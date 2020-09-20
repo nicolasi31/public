@@ -1,3 +1,4 @@
+---
 - name: Add interface using aggregate
   ios_interface:
     aggregate:

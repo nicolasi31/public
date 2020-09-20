@@ -1,9 +1,10 @@
+---
 - hosts:
   - rtr
   - srt
 #- hosts: all
   roles:
-    - common
+    - ciscocommon
 
 #- import_playbook: rtr.yml
 

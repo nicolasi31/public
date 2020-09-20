@@ -1,0 +1,8 @@
+---
+- name: "{{ ansible_distribution }} - Ansible Get Facts - Save"
+  shell: |
+     echo "{{ ansible_facts }}" > ${HOME}/ansiblevars.{{ hostname.short }}.{{ ansible_date_time.iso8601_basic_short }}.txt
+  args:
+    executable: /bin/sh
+  tags: [ alpine, getfacts ]
+

@@ -1,6 +1,0 @@
-# Get installed package list
-- name: "Common - Vars - Get installed package list"
-  package_facts:
-    manager: "auto"
-  tags: [ centos, network, etckeeper, firewall ]
-

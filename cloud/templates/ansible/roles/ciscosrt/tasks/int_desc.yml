@@ -1,3 +1,4 @@
+---
 - name: Merge provided configuration with device configuration
   ios_interfaces:
     config:

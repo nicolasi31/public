@@ -1,0 +1,19 @@
+---
+- name: "{{ ansible_distribution }} - ETCKeeper - Ensure etc is versionned"
+  shell: "etckeeper init"
+  args:
+    executable: /bin/bash
+    creates: /etc/.git
+    chdir: /etc
+  when: "'etckeeper' in ansible_facts.packages"
+  tags: [ centos, never, etckeeper ]
+  
+- name: "{{ ansible_distribution }} - ETCKeeper - Ensure first commit is done for etc"
+  shell: "etckeeper commit 'First commit'"
+  args:
+    executable: /bin/bash
+    creates: /etc/.git/refs/heads/master
+    chdir: /etc 
+  when: "'etckeeper' in ansible_facts.packages"
+  tags: [ centos, never, etckeeper ]
+

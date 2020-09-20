@@ -1,0 +1,20 @@
+---
+- name: "{{ ansible_distribution }} - Sudo - remove existing debian user sudo file"
+  file: path={{ item }} state=absent
+  with_items:
+    - "/etc/sudoers.d/debian-cloud-init"
+  tags: [ debian, sudo ]
+
+- name: "{{ ansible_distribution }} - Sudo - Update {{ newuser }} sudo file"
+  blockinfile:
+    path: /etc/sudoers.d/{{ newuser }}
+    create: yes
+    block: |
+      #{{ newuser }}        ALL=(ALL)       NOPASSWD: ALL
+      #
+      Defaults env_keep+="SSH_CLIENT SSH_CONNECTION SSH_TTY LANG ftp_proxy http_proxy https_proxy no_proxy"
+      #
+      Cmnd_Alias POWER = /sbin/shutdown, /sbin/reboot, /sbin/poweroff, /sbin/halt, /usr/sbin/pm-*, /bin/systemctl reboot, /bin/systemctl poweroff*, /bin/systemctl suspend, /bin/systemctl hibernate
+      {{ newuser }} ALL=(ALL) NOPASSWD: POWER
+  tags: [ debian, sudo ]
+

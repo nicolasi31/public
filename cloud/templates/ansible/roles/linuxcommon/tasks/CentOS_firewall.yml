@@ -1,0 +1,19 @@
+---
+- name: "{{ ansible_distribution }} - Network - firewalld is started and enabled"
+  systemd:
+    name: firewalld
+    enabled: yes
+    masked: no
+    state: started
+    daemon_reload: yes
+  when: "'firewalld' in ansible_facts.packages"
+  tags: [ centos, network, firewall ]
+
+- name: "{{ ansible_distribution }} - Network - Add sshd rule to firewalld"
+  firewalld: 
+    service: ssh
+    permanent: true
+    immediate: true
+    state: enabled
+  when: "'firewalld' in ansible_facts.packages"
+  tags: [ centos, network, firewall ]

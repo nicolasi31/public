@@ -1,0 +1,39 @@
+---
+- name: "Common - RSyslog - Own configuration"
+  blockinfile:
+    path: /etc/rsyslog.d/rsyslog-perso.conf
+    create: yes
+    block: |
+      #*.*  @192.168.0.100:514
+      :msg, contains, "TCPSYNACK" -/var/log/nftables.log
+      & stop
+      :msg, contains, "TCPSYNOUT" -/var/log/nftables.log
+      & stop
+      :msg, contains, "DROPIN"    -/var/log/nftables.log
+      & stop
+      :msg, contains, "DROPFW"    -/var/log/nftables.log
+      & stop
+      :msg, contains, "CRON"      -/var/log/cron.log
+      & stop
+      :programname, contains, "node_exporter" -/var/log/node_exporter.log
+      & stop
+      :programname, contains, "prometheus" -/var/log/prometheus.log
+      & stop
+      :programname, contains, "kibana" -/var/log/kibana.log
+      & stop
+      :programname, contains, "metricbeat" -/var/log/metricbeat.log
+      & stop
+      :programname, contains, "named" -/var/log/named.log
+      & stop
+      :programname, contains, "dhcpd" -/var/log/dhcpd.log
+      & stop
+      :programname, contains, "dhcrelay" -/var/log/dhcpd.log
+      & stop
+      :programname, contains, "chronyd" -/var/log/chronyd.log
+      & stop
+      :programname, contains, "perso-mpv.clipboard.desktop" -/var/log/mpv.log
+      & stop
+  tags: [ common, rsyslog ]
+  notify:
+  - restart rsyslog
+

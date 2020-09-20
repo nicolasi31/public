@@ -1,0 +1,72 @@
+---
+- name: "{{ ansible_distribution }} - Network - Set Static IP"
+  shell: |
+    export NMCLI_INTF="{{ ansible_default_ipv4.alias }}"
+    export NMCLI_IPADDR=$(ip add show ${NMCLI_INTF} | grep "inet " | tr -s " " | cut -d " " -f3 | cut -d "/" -f1)
+    export NMCLI_PREFIX=$(ip add show ${NMCLI_INTF} | grep "inet " | tr -s " " | cut -d " " -f3 | cut -d "/" -f2)
+    export NMCLI_GATEWAY=$(ip route show default | cut -d\  -f3)
+    export NMCLI_DNS1=$(cat /etc/resolv.conf | grep ^nameserver | head -n1 | cut -d\  -f2)
+    export NMCLI_DNS2=$(cat /etc/resolv.conf | grep ^nameserver | head -n2 | tail -n1 | cut -d\  -f2)
+    export NMCLI_DOMAIN=$(cat /etc/resolv.conf | grep ^search | cut -d\  -f2)
+    for NMCLI_CONNTODELETE in $(nmcli connection show | grep "${NMCLI_INTF}\|ens3" | tr " " "\n" | grep -e "^[a-z0-9]\{8\}-[a-z0-9]\{4\}-[a-z0-9]\{4\}-[a-z0-9]\{4\}-[a-z0-9]\{12\}*")
+    do
+      nmcli connection delete ${NMCLI_CONNTODELETE}
+    done ; \
+    nmcli connection add \
+     con-name ${NMCLI_INTF} \
+     type ethernet \
+     ifname ${NMCLI_INTF} \
+     ipv4.method manual \
+     connection.autoconnect yes \
+     ip4 ${NMCLI_IPADDR}/${NMCLI_PREFIX} \
+     gw4 ${NMCLI_GATEWAY} \
+     ipv4.dns ${NMCLI_DNS1}\ ${NMCLI_DNS2} \
+     ipv4.dns-search ${NMCLI_DOMAIN} \
+     ipv6.method disabled \
+     mtu {{ mtu }}
+  args:
+    executable: /bin/bash
+  tags: [ centos, never, staticip ]
+
+
+
+
+
+#- name: "{{ ansible_distribution }} - Network - Static Network Configuration"
+#  nmcli:
+#    type: ethernet
+#    conn_name: 'System eth0'
+#    ip4: '{{ ansible_default_ipv4.address }}'
+#    gw4: '{{ ansible_default_ipv4.gateway }}'
+#    state: present
+
+#- name: "{{ ansible_distribution }} - Network - set Static IP"
+#  command: nmcli conn modify System\ eth0 ifname {{ ansible_default_ipv4.alias }} ip4 {{ ansible_default_ipv4.address }}/24 gw4 {{ ansible_default_ipv4.gateway }}
+##  command: nmcli conn modify System\ eth0 ifname {{ ansible_default_ipv4.alias }} ip4 {{ ansible_default_ipv4.address }}/$(bits=0 ; for octet in $(echo {{ ansible_default_ipv4.netmask }} | sed 's/\./ /g'); do binbits=$(echo "obase=2; ibase=10; ${octet}"| bc | sed 's/0//g') ; bits=$(expr $bits + ${#binbits}) ; done ; echo "${bits}") gw4 {{ ansible_default_ipv4.gateway }}
+
+#- name: "{{ ansible_distribution }} - Network - set Static DNS"
+#  command: nmcli conn modify System\ eth0 ipv4.dns $(nmcli connection show System\ eth0 | grep " domain_name_servers" | tr -s " "  | cut -d= -f2)
+
+
+#- name: "{{ ansible_distribution }} - Network - set Static IP"
+#  shell: |
+#    sed -i \
+#    "s/^BOOTPROTO=.*$/BOOTPROTO=none/" \
+#    "/^PEERDNS=.*$/d" \
+#    /etc/sysconfig/network-scripts/ifcfg-eth0
+#    /bin/echo -e \
+#    "PROXY_METHOD=none
+#    BROWSER_ONLY=no
+#    IPADDR=$(ip add show eth0 | grep inet\  | tr -s \  | cut -d\  -f3 | cut -d\/ -f1)
+#    PREFIX=$(ip add show eth0 | grep inet\  | tr -s \  | cut -d\  -f3 | cut -d\/ -f2)
+#    GATEWAY=$(ip route show default | cut -d\  -f3)
+#    DNS1=$(cat /etc/resolv.conf | grep ^nameserver | head -n1 | cut -d\  -f2)
+#    DNS2=$(cat /etc/resolv.conf | grep ^nameserver | head -n2 | tail -n1 | cut -d\  -f2)
+#    DOMAIN=$(cat /etc/resolv.conf | grep ^search | cut -d\  -f2)
+#    DEFROUTE=yes
+#    IPV4_FAILURE_FATAL=no
+#    MTU={{ mtu }}" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+##    exit 0
+#  args:
+#    executable: /bin/bash
+

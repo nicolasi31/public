@@ -1,0 +1,23 @@
+---
+- name: "{{ ansible_distribution }} - Packages - Ensure packages are installed and up-to-date"
+  yum: 
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages: "{{ rpmstoinstall }}"
+  tags: [ centos, packages ]
+
+- name: "{{ ansible_distribution }} - Packages - Uninstall unnecessary packages"
+  yum: 
+    name: "{{ packages }}"
+    state: absent
+  vars:
+    packages: "{{ rpmstoremove }}"
+  tags: [ centos, packages ]
+
+- name: "{{ ansible_distribution }} - Packages - Ensure all pkgs are up-to-date"
+  yum:
+    name: '*'
+    state: latest
+  tags: [ centos, never, upgrade ]
+

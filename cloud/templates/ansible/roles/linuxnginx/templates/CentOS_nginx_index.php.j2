@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>example.com</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="style.css" media="screen" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <?php
+
+      $indicesServer = array('PHP_SELF',
+        'argv',
+        'argc',
+        'GATEWAY_INTERFACE',
+        'SERVER_ADDR',
+        'SERVER_NAME',
+        'SERVER_SOFTWARE',
+        'SERVER_PROTOCOL',
+        'REQUEST_METHOD',
+        'REQUEST_TIME',
+        'REQUEST_TIME_FLOAT',
+        'QUERY_STRING',
+        'DOCUMENT_ROOT',
+        'HTTP_ACCEPT',
+        'HTTP_ACCEPT_CHARSET',
+        'HTTP_ACCEPT_ENCODING',
+        'HTTP_ACCEPT_LANGUAGE',
+        'HTTP_CONNECTION',
+        'HTTP_HOST',
+        'HTTP_REFERER',
+        'HTTP_USER_AGENT',
+        'HTTPS',
+        'REMOTE_ADDR',
+        'REMOTE_HOST',
+        'REMOTE_PORT',
+        'REMOTE_USER',
+        'REDIRECT_REMOTE_USER',
+        'SCRIPT_FILENAME',
+        'SERVER_ADMIN',
+        'SERVER_PORT',
+        'SERVER_SIGNATURE',
+        'PATH_TRANSLATED',
+        'SCRIPT_NAME',
+        'REQUEST_URI',
+        'PHP_AUTH_DIGEST',
+        'PHP_AUTH_USER',
+        'PHP_AUTH_PW',
+        'AUTH_TYPE',
+        'PATH_INFO',
+        'ORIG_PATH_INFO') ;
+
+      echo "<div class='divtroubleshoot'><table class='tabletroubleshoot'><tr class='trtroubleshoot'><th class='thtroubleshoot' colspan='2'>getenv</th></tr>\n";
+      $varenv = getenv();
+      foreach ($varenv as $key => $value) { echo "<tr class='trtroubleshoot'><td class='tdtroubleshoot'>".$key."</td><td class='tdtroubleshoot'>".$value."</td></tr>\n" ; }
+      echo "</table></div>\n";
+
+      echo "<div class='divtroubleshoot'><table class='tabletroubleshoot'><tr class='trtroubleshoot'><th class='thtroubleshoot' colspan='2'>getallheaders</th></tr>\n";
+      $varheaders = getallheaders();
+      foreach ($varheaders as $key => $value) { echo "<tr class='trtroubleshoot'><td class='tdtroubleshoot'>".$key."</td><td class='tdtroubleshoot'>".$value."</td></tr>\n" ; }
+      echo "</table></div>\n";
+
+      echo "<div class='divtroubleshoot'><table class='tabletroubleshoot'><tr class='trtroubleshoot'><th class='thtroubleshoot' colspan='2'>get_defined_vars</th></tr>\n";
+      $vardefined = get_defined_vars();
+      foreach ($vardefined as $key => $value) { echo "<tr class='trtroubleshoot'><td class='tdtroubleshoot'>".$key."</td><td class='tdtroubleshoot'>".$value."</td></tr>\n" ; }
+      echo "</table></div>\n";
+
+      echo "<div class='divtroubleshoot'><table class='tabletroubleshoot'><tr class='trtroubleshoot'><th class='thtroubleshoot' colspan='2'>_SERVER</th></tr>\n";
+      foreach ($indicesServer as $arg) {
+        if (isset($_SERVER[$arg])) { echo "<tr class='trtroubleshoot'><td class='tdtroubleshoot'>".$arg."</td><td class='tdtroubleshoot'>".$_SERVER[$arg]."</td></tr>\n" ; }
+        else { echo "<tr><td>".$arg."</td><td>-</td></tr>\n" ; }
+      }
+      echo "</table></div>\n";
+
+      echo "<div class='divtroubleshoot'><table class='tabletroubleshoot'><tr class='trtroubleshoot'><th class='thtroubleshoot' colspan='2'>varenv</th></tr>\n";
+      foreach ($indicesServer as $arg) {
+        if (isset($varenv[$arg])) { echo "<tr class='trtroubleshoot'><td class='tdtroubleshoot'>".$arg."</td><td class='tdtroubleshoot'>".$varenv[$arg]."</td></tr>\n" ; }
+        else { echo "<tr><td>".$arg."</td><td>-</td></tr>\n" ; }
+      }
+      echo "</table></div>\n";
+    ?>
+  </body>
+</html>
