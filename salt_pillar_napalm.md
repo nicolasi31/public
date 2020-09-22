@@ -68,3 +68,5 @@ proxy:
 #    use_keys: False
 
 
+salt 'ciscolab' net.config source='running'
+
