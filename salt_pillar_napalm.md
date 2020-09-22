@@ -117,6 +117,27 @@ salt 'ciscolab' snmp.config
 
 salt 'ciscolab' users.config
 
+
+salt 'ciscolab'  grains.get host
+
+salt 'ciscolab'  grains.get host_dns
+
+salt 'ciscolab'  grains.get serial
+
+salt 'ciscolab'  grains.get hostname
+
+salt 'ciscolab'  grains.get uptime
+
+salt 'ciscolab'  grains.get vendor
+
+salt 'ciscolab'  grains.get model
+
+salt -G 'vendor:Cisco' net.cli "show version"
+
+
 https://docs.saltstack.com/en/master/topics/installation/nxos.html
 salt 'ciscolab'  net.cli "show guestshell detail" 
+
+https://docs.saltstack.com/en/master/ref/modules/all/salt.modules.junos.html
+
 
