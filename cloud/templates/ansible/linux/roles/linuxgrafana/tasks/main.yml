@@ -1,0 +1,10 @@
+---
+- name: "Grafana - Dedicated Vars"
+  include_vars:
+    file: "{{ ansible_distribution }}_vars.yml"
+  tags: [ grafana, centos, debian ]
+
+- name: "Grafana - {{ ansible_distribution }} - Grafana tasks"
+  include_tasks: "{{ ansible_distribution }}_grafana.yml"
+  tags: [ grafana, centos, debian ]
+

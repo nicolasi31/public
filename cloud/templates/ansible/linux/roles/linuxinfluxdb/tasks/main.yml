@@ -1,0 +1,10 @@
+---
+- name: "InfluxDB - Dedicated Vars"
+  include_vars:
+    file: "{{ ansible_distribution }}_vars.yml"
+  tags: [ influxdb, centos, debian ]
+
+- name: "InfluxDB - {{ ansible_distribution }} - InfluxDB tasks"
+  include_tasks: "{{ ansible_distribution }}_influxdb.yml"
+  tags: [ influxdb, centos, debian ]
+

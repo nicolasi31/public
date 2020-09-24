@@ -1,0 +1,21 @@
+ansible_user: root
+
+salt_dir: /etc/salt
+salt_pillar_dir: /etc/salt/pillar
+
+saltpackages:
+ - python3-pip
+
+saltpippackages:
+ - napalm-base
+ - salt-napalm
+ - napalm-ios
+ - napalm-junos
+ - napalm-nxos
+
+
+ciscosbxhostname: sbx-nxos-mgmt.cisco.com
+ciscosbxusername: admin
+ciscosbxpassword: Admin_1234!
+ciscosbxport: 8181
+

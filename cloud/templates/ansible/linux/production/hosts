@@ -17,7 +17,13 @@ all:
               hostname:
                 domain: example.com
                 short: centos01
-              nginxwebroot: /usr/share/nginx/html
+              ansible_python_interpreter: /usr/libexec/platform-python
+#              nginxwebroot: /usr/share/nginx/html
+#              collectdconffile: /etc/collectd.conf
+#              collectdpackages:
+#                - collectd
+#                - collectd-rrdtool
+#                - collectd-disk
         debian_hosts:
           hosts:
             debian01:
@@ -26,7 +32,12 @@ all:
               hostname:
                 domain: example.com
                 short: debian01
-              nginxwebroot: /var/www/html
+#              nginxwebroot: /var/www/html
+#              collectdconffile: /etc/collectd/collectd.conf
+#              collectdpackages:
+#                - collectd
+#      vars:
+#        ansible_user: root
     cisco_hosts:
       children:
         rtr:

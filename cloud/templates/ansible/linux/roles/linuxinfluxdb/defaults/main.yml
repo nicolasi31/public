@@ -1,0 +1,13 @@
+ansible_user: root
+
+enable_http: true
+http_bind:
+http_port: 8086
+enable_collectd: true
+collectd_address:
+collectd_port: 25826
+name_db: collectd_db
+collectd_typesdb: /usr/share/collectd/types.db
+url: https://repos.influxdata.com/ubuntu
+version: bionic
+repository: stable

@@ -1,0 +1,12 @@
+{% for currentchassis in chassis %}
+#####################
+  {{ currentchassis.name }}
+#####################
+{% for item in currentchassis.interface_list %}
+!
+interface {{ item.interface }}
+  switchport trunk allowed vlan add {{ item.vlan }}
+{% endfor %}
+
+{% endfor %}
+

@@ -1,4 +1,9 @@
 ---
+- name: "NGINX - Dedicated Vars"
+  include_vars:
+    file: "{{ ansible_distribution }}_vars.yml"
+  tags: [ nginx, centos, debian ]
+
 - name: "NGINX - PACKAGES - install"
   package:
     name: nginx

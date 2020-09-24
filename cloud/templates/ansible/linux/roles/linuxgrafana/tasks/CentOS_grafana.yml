@@ -1,0 +1,16 @@
+---
+- name: "Grafana - {{ ansible_distribution }} - Packages install"
+  package:
+    name: "{{ grafanapackages }}"
+    state: present
+  tags: [ grafana, centos, packages ]
+
+- name: "Grafana - {{ ansible_distribution }} - Enable and start service"
+  systemd:
+    name: grafana-server
+    enabled: yes
+    masked: no
+    state: started
+    daemon_reload: yes
+  tags: [ grafana, centos, services, systemd ]
+

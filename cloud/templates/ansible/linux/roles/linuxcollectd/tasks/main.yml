@@ -1,0 +1,30 @@
+---
+- name: "Collectd - Dedicated Vars"
+  include_vars:
+    file: "{{ ansible_distribution }}_vars.yml"
+  tags: [ centos, debian, collectd ]
+
+- name: "Collectd - {{ ansible_distribution }} - Packages install"
+  package:
+    name: "{{ collectdpackages }}"
+    state: present
+  tags: [ collectd, packages ]
+
+- name: "Collectd - {{ ansible_distribution }} - Upload config"
+  template:
+    src: collectd.conf
+    dest: "{{ collectdconffile }}"
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
+  
+- name: "Collectd - {{ ansible_distribution }} - Enable and start service"
+  systemd:
+    name: collectd
+    enabled: yes
+    masked: no
+    state: started
+    daemon_reload: yes
+  tags: [ influxdb, services, systemd ]
+

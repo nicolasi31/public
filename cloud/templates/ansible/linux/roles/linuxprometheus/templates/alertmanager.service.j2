@@ -1,0 +1,9 @@
+[Unit]
+Description=Prometheus Alertmanager
+
+[Service]
+Type=simple
+ExecStart={{ alertmanager_dir }}/alertmanager --config.file={{ alertmanager_dir }}/alertmanager.yml
+
+[Install]
+WantedBy=default.target

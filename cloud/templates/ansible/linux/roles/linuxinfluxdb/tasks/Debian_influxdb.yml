@@ -1,0 +1,37 @@
+- name: "InfluxDB - {{ ansible_distribution }} - APT key add"
+  apt_key:
+    url: https://repos.influxdata.com/influxdb.key
+    state: present
+
+- name: "InfluxDB - {{ ansible_distribution }} - APT sources.lists update"
+  template:
+    src: "{{ ansible_distribution }}_influxdb.list"
+    dest: /etc/apt/sources.list.d/influxdb.list
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
+
+- name: "InfluxDB - {{ ansible_distribution }} - Install packages"
+  apt:
+    name: influxdb      
+    update_cache: yes
+
+- name: "InfluxDB - {{ ansible_distribution }} - Upload configuration"
+  template:
+    src: "{{ ansible_distribution }}_influxdb.conf"
+    dest: /etc/influxdb/influxdb.conf
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
+
+- name: "InfluxDB - {{ ansible_distribution }} - Enable and start service"
+  systemd:
+    name: influxdb
+    enabled: yes
+    masked: no
+    state: started
+    daemon_reload: yes
+  tags: [ influxdb, services, systemd ]
+

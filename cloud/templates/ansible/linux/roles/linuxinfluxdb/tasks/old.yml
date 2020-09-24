@@ -1,0 +1,70 @@
+- name: add key
+  apt_key:
+    url: https://repos.influxdata.com/influxdb.key
+    state: present
+
+    #- name: get info system
+    # shell: source /etc/lsb-release 
+    #args:
+    #executable: /bin/bash
+
+- name: modify sources.lists
+  file:
+    path: /etc/apt/sources.list.d/influxdb.list
+    state: touch  
+
+- lineinfile:
+    path: /etc/apt/sources.list.d/influxdb.list
+    line: 'deb https://repos.influxdata.com/ubuntu bionic stable'
+
+- name: apt
+  apt:
+    name: influxdb      
+    update_cache: yes
+
+- name: config
+  lineinfile: 
+    path: /etc/influxdb/influxdb.conf
+    regexp: '# bind-address = "127\.0\.0\.1:8088"'
+    line: 'bind-address = "{{ host }}:25826"'
+
+- lineinfile:
+    path: /etc/influxdb/influxdb.conf
+    insertafter: '\[http\]'
+    line: 'bind-address = ":8086"'
+
+- lineinfile:
+    path: /etc/influxdb/influxdb.conf
+    insertafter: '\[http\]'
+    line: 'enabled = true'
+
+- lineinfile:
+    path: /etc/influxdb/influxdb.conf
+    insertafter: '\[\[collectd\]\]'
+    line: 'typesdb = "/usr/share/collectd/types.db"'
+    firstmatch: yes
+
+- lineinfile:
+    path: /etc/influxdb/influxdb.conf
+    insertafter: '\[\[collectd\]\]'
+    line: 'database = "collectd_db"'
+    firstmatch: yes
+
+- lineinfile:
+    path: /etc/influxdb/influxdb.conf
+    insertafter: '\[\[collectd\]\]'
+    line: 'bind-address = ":25826"'
+
+- lineinfile:
+    path: /etc/influxdb/influxdb.conf
+    insertafter: '\[\[collectd\]\]'
+    line: 'enabled = true'
+    firstmatch: yes
+
+
+- name: start
+  shell: systemctl start influxdb
+
+- name: enable
+  shell: systemctl enable influxdb 
+ 

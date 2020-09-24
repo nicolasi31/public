@@ -1,0 +1,9 @@
+[Unit]
+Description=Prometheus SNMP Exporter
+
+[Service]
+Type=simple
+ExecStart={{ snmpexporter_dir }}/snmp_exporter --config.file {{ snmpexporter_dir }}/snmp.yml
+
+[Install]
+WantedBy=default.target

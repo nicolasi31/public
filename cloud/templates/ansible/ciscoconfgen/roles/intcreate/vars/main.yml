@@ -1,0 +1,62 @@
+---
+chassis:
+  - name: SRD1POD1
+    ip_interfaces:
+    - interface: Vlan101
+      description: "*** My description11 ***"
+      ip: 10.0.1.2
+      cidr: 24
+      ospfproc: 32
+      ospfarea: 8.0.0.0
+      mhsrpid1: 100
+      mhsrpid1mhsrpkey1: CHANGEME1
+      mhsrpid1mhsrpprio1: 90
+      mhsrpid1mhsrpip1: 10.0.1.1
+      mhsrpid2: 200
+      mhsrpid1mhsrpkey2: CHANGEME2
+      mhsrpid1mhsrpprio2: 100
+      mhsrpid1mhsrpip2: 10.0.1.9
+    - interface: Vlan102
+      description: "*** My description12 ***"
+      ip: 10.0.2.2
+      cidr: 24
+      ospfproc: 32
+      ospfarea: 8.0.0.0
+      mhsrpid1: 110
+      mhsrpid1mhsrpkey1: CHANGEME1
+      mhsrpid1mhsrpprio1: 90
+      mhsrpid1mhsrpip1: 10.0.2.1
+      mhsrpid2: 220
+      mhsrpid1mhsrpkey2: CHANGEME2
+      mhsrpid1mhsrpprio2: 100
+      mhsrpid1mhsrpip2: 10.0.2.9
+  - name: SRD2POD1
+    ip_interfaces:
+    - interface: Vlan101
+      description: "*** My description21 ***"
+      ip: 10.0.1.3
+      cidr: 24
+      ospfproc: 32
+      ospfarea: 8.0.0.0
+      mhsrpid1: 100
+      mhsrpid1mhsrpkey1: CHANGEME1
+      mhsrpid1mhsrpprio1: 90
+      mhsrpid1mhsrpip1: 10.0.1.1
+      mhsrpid2: 200
+      mhsrpid1mhsrpkey2: CHANGEME2
+      mhsrpid1mhsrpprio2: 100
+      mhsrpid1mhsrpip2: 10.0.1.9
+    - interface: Vlan102
+      description: "*** My description22 ***"
+      ip: 10.0.2.3
+      cidr: 24
+      ospfproc: 32
+      ospfarea: 8.0.0.0
+      mhsrpid1: 110
+      mhsrpid1mhsrpkey1: CHANGEME1
+      mhsrpid1mhsrpprio1: 90
+      mhsrpid1mhsrpip1: 10.0.2.1
+      mhsrpid2: 220
+      mhsrpid1mhsrpkey2: CHANGEME2
+      mhsrpid1mhsrpprio2: 100
+      mhsrpid1mhsrpip2: 10.0.2.9

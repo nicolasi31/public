@@ -1,0 +1,25 @@
+{% if item.VPC_ID %}
+
+interface port-channel{{ item.VPC_ID }}
+  description {{ item.SRV_HOSTNAME }};LIN-CTL;{{ item.SWA_PRT }}
+  switchport mode trunk
+  no lacp suspend-individual
+  switchport trunk native vlan {{ item.N_VLAN }}
+  switchport trunk allowed vlan {{ item.A_VLAN }}
+  spanning-tree link-type point-to-point
+  spanning-tree port type edge trunk
+  no snmp trap link-status
+  vpc {{ item.VPC_ID }}
+
+interface {{ item.SWA_PRT }}
+  description {{ item.SRV_CRT }};{{ item.SRV_HOSTNAME }};{{ item.SRV_PRT }};{{ item.SRV_TYPE }};NXOS-Conf LACP VTAG-V0;* * VARS
+  no cdp enable
+  switchport mode trunk
+  switchport trunk native vlan {{ item.N_VLAN }}
+  switchport trunk allowed vlan {{ item.A_VLAN }}
+  spanning-tree link-type point-to-point
+  spanning-tree port type edge trunk
+  no snmp trap link-status
+  channel-group {{ item.VPC_ID }} mode active
+
+{% endif %}

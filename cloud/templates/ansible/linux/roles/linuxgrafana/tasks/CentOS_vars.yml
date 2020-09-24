@@ -1,0 +1,4 @@
+grafanapackages:
+  - grafana
+  - grafana-influxdb
+  - grafana-prometheus

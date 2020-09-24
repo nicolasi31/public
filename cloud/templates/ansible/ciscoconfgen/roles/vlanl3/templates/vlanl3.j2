@@ -1,0 +1,60 @@
+{%- set SRD_HOST_NBR = item.SRD_HOST | lower | regex_replace('[a-z]*([0-9]*).*$','\\1') | int -%}
+
+{%- set VLAN_SUBNET_NETMASK = item.VLAN_SUBNET | lower | regex_replace('[0-9]*.[0-9]*.[0-9]*.[0-9]*/([0-9]*)$','\\1') | int -%}
+
+{%- set VLAN_SUBNET_NETLASTBYTE = item.VLAN_SUBNET | lower | regex_replace('[0-9]*.[0-9]*.[0-9]*.([0-9]*)/[0-9]*$','\\1') | int -%}
+
+{%- set VLAN_SUBNET_SHORT = item.VLAN_SUBNET | lower | regex_replace('([0-9]*.[0-9]*.[0-9]*).[0-9]*/[0-9]*$','\\1') -%}
+
+{%- set VLAN_SUBNET_SRDHSRP1 = VLAN_SUBNET_NETLASTBYTE + 1 -%}
+{%- set VLAN_SUBNET_SRDHSRP2 = VLAN_SUBNET_NETLASTBYTE + 9 -%}
+
+
+{%- if item.SITE=='NYCMIA' or item.SITE=='QVIXAT' -%}
+  {%- set VLAN_SUBNET_SRDIP = VLAN_SUBNET_NETLASTBYTE + SRD_HOST_NBR + 1 -%}
+  {%- set VLAN_SUBNET_SRDHSRP1PRIO = 90 -%}
+  {%- set VLAN_SUBNET_SRDHSRP2PRIO = 100 -%}
+  {%- if "MIA" in item.SRD_HOST or "XAT" in item.SRD_HOST -%}
+    {%- set VLAN_SUBNET_SRDIP = VLAN_SUBNET_SRDIP + 2 -%}
+    {%- set VLAN_SUBNET_SRDHSRP1PRIO = VLAN_SUBNET_SRDHSRP1PRIO + 10 -%}
+    {%- set VLAN_SUBNET_SRDHSRP2PRIO = VLAN_SUBNET_SRDHSRP2PRIO - 10 -%}
+  {%- endif -%}
+  {%- if SRD_HOST_NBR == 2 -%}
+    {%- set VLAN_SUBNET_SRDHSRP1PRIO = VLAN_SUBNET_SRDHSRP1PRIO + 5 -%}
+    {%- set VLAN_SUBNET_SRDHSRP2PRIO = VLAN_SUBNET_SRDHSRP2PRIO + 5 -%}
+  {%- endif -%}
+{%- elif SRD_HOST_NBR == 1 -%}
+  {%- set VLAN_SUBNET_SRDIP = VLAN_SUBNET_NETLASTBYTE + SRD_HOST_NBR + 1 -%}
+  {%- set VLAN_SUBNET_SRDHSRP1PRIO = 90 -%}
+{%- elif SRD_HOST_NBR == 2 -%}
+  {%- set VLAN_SUBNET_SRDIP = VLAN_SUBNET_NETLASTBYTE + SRD_HOST_NBR + 2 -%}
+  {%- set VLAN_SUBNET_SRDHSRP1PRIO = 100 -%}
+{%- endif -%}
+
+!
+vlan {{ item.VLAN_ID }}
+  name {{ item.SITE }}-{{ item.ENV }}-{{ item.VLAN_ID }}-{{ item.VLAN_NAME }}
+!
+interface Vlan{{ item.VLAN_ID }}
+  description *** {{ item.SITE }}-{{ item.ENV }}-{{ item.VLAN_ID }}-{{ item.VLAN_NAME }} ***
+  no ip redirects
+  ip address {{ VLAN_SUBNET_SHORT }}.{{ VLAN_SUBNET_SRDIP }}/{{ VLAN_SUBNET_NETMASK }}
+  no ipv6 redirects
+  ip router ospf 32 area 9.0.0.0
+  hsrp version 2
+  hsrp {{ item.VLAN_ID }}
+    authentication md5 key-string CHANGEME
+    preempt delay minimum 60
+    priority {{ VLAN_SUBNET_SRDHSRP1PRIO }}
+    timers msec 250 msec 750
+    ip {{ VLAN_SUBNET_SHORT }}.{{ VLAN_SUBNET_SRDHSRP1 }}
+{% if item.SITE=='NYCMIA' or item.SITE=='QVIXAT' %}
+  hsrp {{ item.MHSRP_ID }}
+    authentication md5 key-string CHANGEME
+    preempt delay minimum 60
+    priority {{ VLAN_SUBNET_SRDHSRP2PRIO }}
+    timers msec 250 msec 750
+    ip {{ VLAN_SUBNET_SHORT }}.{{ VLAN_SUBNET_SRDHSRP2 }}
+  no shutdown
+{% endif %}
+!

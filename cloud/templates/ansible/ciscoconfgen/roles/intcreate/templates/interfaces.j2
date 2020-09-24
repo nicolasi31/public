@@ -1,0 +1,31 @@
+{% for currentchassis in chassis %}
+#####################
+  {{ currentchassis.name }}
+#####################
+{% for item in currentchassis.ip_interfaces %}
+!
+interface {{ item.interface }}
+  description {{ item.description }}
+  ip address {{ item.ip }}/{{ item.cidr }}
+  no ip redirects
+  no ipv6 redirects
+  ip router ospf {{ item.ospfproc }} area {{ item.ospfarea }}
+  hsrp version 2
+  hsrp {{ item.mhsrpid1 }}
+    authentication md5 key-string {{ item.mhsrpid1mhsrpkey1 }}
+    preempt delay minimum 60
+    priority {{ item.mhsrpid1mhsrpprio1 }}
+    timers msec 250 msec 750
+    ip {{ item.mhsrpid1mhsrpip1 }}
+  hsrp {{ item.mhsrpid2 }}
+    authentication md5 key-string {{ item.mhsrpid1mhsrpkey2 }}
+    preempt delay minimum 60
+    priority  {{ item.mhsrpid1mhsrpprio2 }}
+    timers msec 250 msec 750
+    ip {{ item.mhsrpid1mhsrpip2 }}
+  no shutdown
+{% endfor %}
+
+
+{% endfor %}
+

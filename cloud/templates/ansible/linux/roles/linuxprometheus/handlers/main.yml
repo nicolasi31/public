@@ -1,0 +1,32 @@
+---
+- name: restart prometheus
+  systemd:
+    name: prometheus
+    enabled: yes
+    masked: no
+    state: started
+    daemon_reload: yes
+
+- name: restart alertmanager
+  systemd:
+    name: alertmanager
+    enabled: yes
+    masked: no
+    state: started
+    daemon_reload: yes
+
+- name: restart nodeexporter
+  systemd:
+    name: nodeexporter
+    enabled: yes
+    masked: no
+    state: started
+    daemon_reload: yes
+
+- name: restart snmpexporter
+  systemd:
+    name: snmpexporter
+    enabled: yes
+    masked: no
+    state: started
+    daemon_reload: yes

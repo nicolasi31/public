@@ -1,0 +1,189 @@
+---
+#- name: "Salt - {{ ansible_distribution }} - Install packages"
+- name: "Salt - Install Distribution packages"
+  package:
+    name: "{{ saltpackages }}"
+    state: present
+  tags: [ salt, packages ]
+
+- name: "Salt - {{ ansible_distribution }} - Downgrade PIP"
+  pip:
+    name: pip==9.0.3
+  tags: [ salt, packages, pip, napalm ]
+  when: (ansible_distribution == "Debian" and ansible_distribution_major_version == "10")
+
+- name: "Salt - Install Napalm packages"
+  pip:
+    name: napalm
+  tags: [ salt, packages, pip, napalm ]
+
+- name: "Salt - Install PIP packages"
+  pip:
+    name: "{{ saltpippackages }}"
+  tags: [ salt, packages, pip ]
+
+- name: "Salt - {{ ansible_distribution }} - Update hosts file"
+  replace:
+    backup: yes
+    dest: /etc/hosts
+    regexp: '^(127\.0\.0\.1\t*localhost)$'
+    replace: '\1 salt'
+  tags: [ salt, hosts ]
+  when: (ansible_distribution == "Debian" and ansible_distribution_major_version == "10")
+
+- name: "Salt - {{ ansible_distribution }} - Update hosts file"
+  replace:
+    backup: yes
+    dest: /etc/hosts
+    regexp: '^(127\.0\.0\.1 *localhost localhost.localdomain localhost4 localhost4.localdomain4)$'
+    replace: '\1 salt'
+  tags: [ salt, hosts ]
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "8")
+
+- name: "Salt - Download installation script"
+  get_url:
+    url: https://bootstrap.saltstack.com
+    dest: install_salt.sh
+    mode: '0750'
+  tags: [ salt, download, script ]
+
+- name: "Salt - Run installation script"
+  shell: sh install_salt.sh -P -M -x python3
+  args:
+    executable: /bin/sh
+  tags: [ salt, install ]
+
+- name: "Salt - Backup Salt Master configuration"
+  archive:
+    path: "{{ salt_dir }}/master"
+    dest: salt_master.{{ ansible_date_time.iso8601_basic_short }}.org.gz
+    format: gz
+  tags: [ salt, archive ]
+
+- name: "Salt - Upload Salt Master configuration"
+  template:
+    src: "salt_master.j2"
+    dest: "{{ salt_dir }}/master"
+    owner: root
+    group: root
+    mode: 0644
+  tags: [ salt, config ]
+
+- name: "Salt - Backup Salt Minion configuration"
+  archive:
+    path: "{{ salt_dir }}/minion"
+    dest: salt_minion.{{ ansible_date_time.iso8601_basic_short }}.org.gz
+    format: gz
+  tags: [ salt, archive ]
+
+- name: "Salt - Upload Salt Minion configuration"
+  template:
+    src: "salt_minion.j2"
+    dest: "{{ salt_dir }}/minion"
+    owner: root
+    group: root
+    mode: 0644
+  tags: [ salt, config ]
+
+- name: "Salt - Copy minion_master.pub"
+  copy:
+    remote_src: yes
+    src: /etc/salt/pki/master/master.pub
+    dest: /etc/salt/pki/minion/minion_master.pub
+    owner: root
+    group: root
+    mode: '0644'
+  tags: [ salt, config ]
+
+- name: "Salt - Backup Salt Proxy configuration"
+  archive:
+    path: "{{ salt_dir }}/proxy"
+    dest: salt_proxy.{{ ansible_date_time.iso8601_basic_short }}.org.gz
+    format: gz
+  tags: [ salt, archive ]
+
+- name: "Salt - Upload Salt Proxy configuration"
+  template:
+    src: "salt_proxy.j2"
+    dest: "{{ salt_dir }}/proxy"
+    owner: root
+    group: root
+    mode: 0644
+  tags: [ salt, config ]
+
+- name: "Salt - Create {{ salt_pillar_dir }} directory"
+  file:
+    path: "{{ salt_pillar_dir  }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags: [ salt, config ]
+
+- name: "Salt - Backup Salt Pillar Cisco NXOS example configuration"
+  archive:
+    path: "{{ salt_pillar_dir }}/sbx-nxos-mgmt-cisco-com.sls"
+    dest: salt_sbx-nxos-mgmt-cisco-com.sls.{{ ansible_date_time.iso8601_basic_short }}.org.gz
+    format: gz
+  tags: [ salt, archive ]
+
+- name: "Salt - Upload Salt Pillar Cisco NXOS example configuration"
+  template:
+    src: "salt_sbx-nxos-mgmt-cisco-com_sls.j2"
+    dest: "{{ salt_pillar_dir }}/sbx-nxos-mgmt-cisco-com.sls"
+    owner: root
+    group: root
+    mode: 0644
+  tags: [ salt, config ]
+
+- name: "Salt - Backup Salt Pillar Top example configuration"
+  archive:
+    path: "{{ salt_pillar_dir }}/top.sls"
+    dest: salt_top.sls.{{ ansible_date_time.iso8601_basic_short }}.org.gz
+    format: gz
+  tags: [ salt, archive ]
+
+- name: "Salt - Upload Salt Pillar Top example configuration"
+  template:
+    src: "salt_top_sls.j2"
+    dest: "{{ salt_pillar_dir }}/top.sls"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart salt-master
+    - restart salt-minion
+  tags: [ salt, services ]
+
+- name: "Salt - Enable salt-proxy@ciscolab"
+  systemd:
+    name: salt-proxy@ciscolab
+    enabled: yes
+    masked: no
+    state: started
+    daemon_reload: yes
+
+- name: "Salt - System infos"
+  debug:
+    msg: System {{ inventory_hostname }} has IP addr {{ ansible_default_ipv4.address }}
+  when: ansible_default_ipv4.address is defined
+  tags: [ salt, masterpubkey ]
+
+- name: "Salt - Check if Master Public Key exists"
+  stat:
+    path: /etc/salt/pki/master/master.pub
+  register: salt_master_pub_key
+  tags: [ salt, masterpubkey ]
+
+- shell: cat /etc/salt/pki/master/master.pub
+  register: result
+  when: salt_master_pub_key.stat.exists
+  tags: [ salt, masterpubkey ]
+
+- name: "Salt - Master Public Key"
+  debug:
+    var: result
+    verbosity: 2
+  when: salt_master_pub_key.stat.exists
+  tags: [ salt, masterpubkey ]
+

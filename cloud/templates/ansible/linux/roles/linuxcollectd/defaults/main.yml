@@ -1,0 +1,4 @@
+ansible_user: root
+
+collectd_address : 192.168.0.100
+collectd_port: 25826

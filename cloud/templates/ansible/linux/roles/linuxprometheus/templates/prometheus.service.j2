@@ -1,0 +1,10 @@
+[Unit]
+Description=Prometheus server
+
+[Service]
+Type=simple
+ExecStart={{ prometheus_dir }}/prometheus --config.file {{ prometheus_dir }}/prometheus.yml
+#ExecStart={{ prometheus_dir }}/prometheus --config.file {{ prometheus_dir }}/prometheus.yml --alertmanager.url=http://{{ alertmanager_address }}:9093 --storage.local.retention=168h
+
+[Install]
+WantedBy=default.target

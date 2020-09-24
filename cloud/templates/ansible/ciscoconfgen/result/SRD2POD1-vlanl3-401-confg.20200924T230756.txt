@@ -1,0 +1,18 @@
+!
+vlan 401
+  name NYC-P-401-VLANPROD401
+!
+interface Vlan401
+  description *** NYC-P-401-VLANPROD401 ***
+  no ip redirects
+  ip address 10.0.41.4/24
+  no ipv6 redirects
+  ip router ospf 32 area 9.0.0.0
+  hsrp version 2
+  hsrp 401
+    authentication md5 key-string CHANGEME
+    preempt delay minimum 60
+    priority 100
+    timers msec 250 msec 750
+    ip 10.0.41.1
+!

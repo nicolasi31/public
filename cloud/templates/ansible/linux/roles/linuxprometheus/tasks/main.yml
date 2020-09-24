@@ -1,0 +1,172 @@
+---
+
+- name: "Prometheus - {{ ansible_distribution }} - Backup {{ prometheus_dir }}/prometheus.yml"
+  archive:
+    path: "{{ prometheus_dir }}/prometheus.yml"
+    dest: prometheus.yml.{{ ansible_date_time.iso8601_basic_short }}.org.gz
+    format: gz
+  tags: [ prometheus, archive ]
+
+- name: "Prometheus - {{ ansible_distribution }} - Create Prometheus directory"
+  file:
+    path: "{{ prometheus_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags: [ prometheus, config ]
+
+- name: "Prometheus - {{ ansible_distribution }} - Get Prometheus"
+  unarchive:
+    src: "{{ prometheus_link }}"
+    dest: "{{ prometheus_dir }}"
+    remote_src: True
+    extra_opts: "--strip=1"
+  tags: [ prometheus, packages ]
+
+- name: "Prometheus - {{ ansible_distribution }} - Upload Prometheus service file"
+  template:
+    src: "prometheus.service.j2"
+    dest: "{{ systemd_dir }}/prometheus.service"
+    owner: root
+    group: root
+    mode: 0644
+  tags: [ prometheus, services, systemd ]
+
+- name: "Prometheus - {{ ansible_distribution }} - Upload Prometheus configuration"
+  template:
+    src: "prometheus.yml.j2"
+    dest: "{{ prometheus_dir }}/prometheus.yml"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart prometheus
+  tags: [ prometheus, config ]
+
+####
+
+- name: "Prometheus - {{ ansible_distribution }} - Backup {{ alertmanager_dir }}/alertmanager.yml"
+  archive:
+    path: "{{ alertmanager_dir }}/alertmanager.yml"
+    dest: alertmanager.yml.{{ ansible_date_time.iso8601_basic_short }}.org.gz
+    format: gz
+  tags: [ prometheus, alertmanager, archive ]
+
+- name: "Prometheus - {{ ansible_distribution }} - Create alertmanager directory"
+  file:
+    path: "{{ alertmanager_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags: [ prometheus, alertmanager, services, systemd ]
+
+- name: Get alertmanager
+  unarchive:
+    src: "{{ alertmanager_link }}"
+    dest: "{{ alertmanager_dir }}"
+    remote_src: True
+    extra_opts: "--strip=1"
+  tags: [ prometheus, alertmanager, services, systemd ]
+
+- name: "Prometheus - {{ ansible_distribution }} - Copy alertmanager config"
+  template:
+    src: "alertmanager.yml.j2"
+    dest: "{{ alertmanager_dir }}/alertmanager.yml"
+    owner: root
+    group: root
+    mode: 0600
+  tags: [ prometheus, alertmanager, services, systemd ]
+
+- name: "Prometheus - {{ ansible_distribution }} - Copy alertmanager service file"
+  template:
+    src: "alertmanager.service.j2"
+    dest: "{{ systemd_dir }}/alertmanager.service"
+    owner: root
+    group: root
+    mode: 0644
+  tags: [ prometheus, alertmanager, services, systemd ]
+
+- name: "Prometheus - {{ ansible_distribution }} - Copy alertmanager simple config"
+  template:
+    src: "alertmanagersimple.yml.j2"
+    dest: "{{ alertmanager_dir }}/simple.yml"
+    owner: root
+    group: root
+    mode: 0600
+  notify: restart alertmanager
+  tags: [ prometheus, alertmanager, services, systemd ]
+
+###
+
+- name: "Prometheus - {{ ansible_distribution }} - Create NodeExporter directory"
+  file:
+    path: "{{ nodeexporter_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags: [ prometheus, nodeexporter, config ]
+
+- name: "Prometheus - {{ ansible_distribution }} - Copy NodeExporter service file"
+  template:
+    src: "nodeexporter.service.j2"
+    dest: "{{ systemd_dir }}/nodeexporter.service"
+    owner: root
+    group: root
+    mode: 0644
+  tags: [ prometheus, nodeexporter, packages ]
+
+- name: "Prometheus - {{ ansible_distribution }} - Get NodeExporter"
+  unarchive:
+    src: "{{ nodeexporter_link }}"
+    dest: "{{ nodeexporter_dir }}"
+    remote_src: True
+    extra_opts: "--strip=1"
+  notify: restart nodeexporter
+  tags: [ prometheus, nodeexporter, packages ]
+
+###
+
+- name: "Prometheus - {{ ansible_distribution }} - Backup {{ snmpexporter_dir }}/snmpexporter.yml"
+  archive:
+    path: "{{ snmpexporter_dir }}/snmp.yml"
+    dest: snmp.yml.{{ ansible_date_time.iso8601_basic_short }}.org.gz
+    format: gz
+  tags: [ prometheus, snmpexporter, archive ]
+
+- name: "Prometheus - {{ ansible_distribution }} - Create SNMPExporter directory"
+  file:
+    path: "{{ snmpexporter_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags: [ prometheus, snmpexporter, config ]
+
+- name: "Prometheus - {{ ansible_distribution }} - Get SNMPExporter"
+  unarchive:
+    src: "{{ snmpexporter_link }}"
+    dest: "{{ snmpexporter_dir }}"
+    remote_src: True
+    extra_opts: "--strip=1"
+  tags: [ prometheus, snmpexporter, packages ]
+
+- name: "Prometheus - {{ ansible_distribution }} - Copy SNMPExporter service file"
+  template:
+    src: "snmpexporter.service.j2"
+    dest: "{{ systemd_dir }}/snmpexporter.service"
+    owner: root
+    group: root
+    mode: 0644
+  tags: [ prometheus, snmpexporter, packages ]
+
+- name: "Prometheus - {{ ansible_distribution }} - Copy SNMPExporter config"
+  template:
+    src: "snmp.yml.j2"
+    dest: "{{ snmpexporter_dir }}/snmp.yml"
+    owner: root
+    group: root
+    mode: 0600
+  notify: restart snmpexporter
+

@@ -1,0 +1,36 @@
+---
+- name: "Grafana - {{ ansible_distribution }} - Add APT key"
+  apt_key:
+    url: https://packages.grafana.com/gpg.key
+    state: present
+  tags: [ grafana, debian, packages ]
+
+- name: "Grafana - {{ ansible_distribution }} - Update APT sources.list"
+  template:
+    src: "{{ ansible_distribution }}_grafana.list"
+    dest: /etc/apt/sources.list.d
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
+  tags: [ grafana, debian, packages ]
+
+- name: "Grafana - {{ ansible_distribution }} - Packages install"
+  apt:
+    name: "{{ grafanapackages }}"
+    update_cache: yes
+#  vars:
+#    packages:
+#    - grafana
+#    - apt-transport-https
+  tags: [ grafana, debian, packages ]
+
+- name: "Grafana - {{ ansible_distribution }} - Enable and start service"
+  systemd:
+    name: grafana-server
+    enabled: yes
+    masked: no
+    state: started
+    daemon_reload: yes
+  tags: [ grafana, debian, services, systemd ]
+

@@ -1,0 +1,17 @@
+---
+- name: restart salt-master
+  systemd:
+    name: salt-master
+    enabled: yes
+    masked: no
+    state: started
+    daemon_reload: yes
+
+- name: restart salt-minion
+  systemd:
+    name: salt-minion
+    enabled: yes
+    masked: no
+    state: started
+    daemon_reload: yes
+

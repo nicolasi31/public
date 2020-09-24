@@ -1,0 +1,35 @@
+- name: install collectd
+  apt:
+    name: collectd
+
+- name: modify collectd.conf
+  lineinfile:
+    path: /etc/collectd/collectd.conf
+    regexp : '#<Plugin network>'
+    line: '<Plugin network>'
+
+- lineinfile:
+    path: /etc/collectd/collectd.conf
+    line: '  Server "{{ host }}" "25826"'
+    insertafter: '<Plugin network>'
+    firstmatch: yes
+
+- lineinfile:
+    path: /etc/collectd/collectd.conf
+    regexp: '#LoadPlugin network'
+    line: 'LoadPlugin network'
+
+- lineinfile:
+    path: /etc/collectd/collectd.conf
+    line: '<\/Plugin>'
+    insertafter: '  Server "{{ host }}" "25826"'
+    firstmatch: yes
+
+- name: restart service
+  block:
+   - service:
+      name: collectd
+      state: restarted
+  rescue:
+    - debug:
+        msg: 'launch ansible-playbook correct_error_collectd.yml -v to correct this error'     

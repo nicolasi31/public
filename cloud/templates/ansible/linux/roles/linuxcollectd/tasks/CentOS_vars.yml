@@ -1,0 +1,6 @@
+collectdconffile: /etc/collectd.conf
+collectdpackages:
+  - collectd
+  - collectd-rrdtool
+  - collectd-disk
+

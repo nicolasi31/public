@@ -1,0 +1,9 @@
+proxy:
+  proxytype: napalm
+  driver: nxos_ssh
+  host: {{ ciscosbxhostname }}
+  username: {{ ciscosbxusername }}
+  password: '{{ ciscosbxpassword }}'
+  optional_args:
+    port: {{ ciscosbxport }}
+#    use_keys: False

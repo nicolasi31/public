@@ -1,0 +1,9 @@
+[Unit]
+Description=Prometheus Node Exporter
+
+[Service]
+Type=simple
+ExecStart={{ nodeexporter_dir }}/node_exporter
+
+[Install]
+WantedBy=default.target

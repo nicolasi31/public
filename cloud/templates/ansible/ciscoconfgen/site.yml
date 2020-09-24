@@ -1,0 +1,5 @@
+---
+- import_playbook: vpc.yml
+- import_playbook: vlanl3.yml
+- import_playbook: intcreate.yml
+- import_playbook: trunkvlanadd.yml

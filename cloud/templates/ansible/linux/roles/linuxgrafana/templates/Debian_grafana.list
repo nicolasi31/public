@@ -1,0 +1,1 @@
+deb {{ grafana_url }} {{ version_grafana }} {{ repo }}

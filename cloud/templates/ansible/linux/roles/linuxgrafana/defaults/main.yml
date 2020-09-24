@@ -1,0 +1,5 @@
+ansible_user: root
+
+grafana_url: https://packages.grafana.com/oss/deb
+version_grafana: stable
+repo: main

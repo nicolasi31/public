@@ -1,0 +1,4 @@
+collectdconffile: /etc/collectd/collectd.conf
+collectdpackages:
+  - collectd
+
