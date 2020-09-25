@@ -1,0 +1,24 @@
+- name: Read input_vlanl3.csv
+  read_csv:
+    path: input_vlanl3.csv
+#    fieldnames: SRD_HOST,SITE,ENV,VLAN_ID,VLAN_NAME,VLAN_SUBNET,MHSRP_ID
+    delimiter: '	'
+    skipinitialspace: true
+  register: csventry
+  delegate_to: localhost
+  tags: [ ciscoconfgen, vlanl3 ]
+
+- name: Generate VLAN configuration
+  template:
+    src: "vlanl3.j2"
+    dest: "result/{{ item.SRD_HOST }}-vlanl3-{{ item.VLAN_ID }}-confg.{{ ansible_date_time.iso8601_basic_short }}.txt"
+  loop: "{{ csventry.list }}"
+  when: not "#" in item.SRD_HOST
+  tags: [ ciscoconfgen, vlanl3 ]
+
+#- name: Print to STDOUT
+#  debug:
+#    msg:
+#     - 'Eqpmt Name: {{ item.EQPMT_NAME }}'
+#  loop: "{{ csventry.list }}"
+

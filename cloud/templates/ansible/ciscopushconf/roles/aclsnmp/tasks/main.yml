@@ -1,0 +1,9 @@
+- name: "Configure SNMP ACL"
+  ios_config:
+    lines:
+      - permit ip host 10.0.0.1 any log
+      - permit ip host 10.0.0.2 any log
+#      - 10 permit ip host 10.0.0.1 any log
+#      - 20 permit ip host 10.0.0.2 any log
+    parents: ip access-list extended mysnmpacl
+

@@ -1,0 +1,24 @@
+- name: Read input_vpc.csv
+  read_csv:
+    path: input_vpc.csv
+#    fieldnames: SWA_HOST,VPC_ID,SWA_PRT N_VLAN,A_VLAN,SRV_HOSTNAME,SRV_PRT,SRV_CRT,SRV_TYPE
+    delimiter: '	'
+    skipinitialspace: true
+  register: csventry
+  delegate_to: localhost
+  tags: [ ciscoconfgen, vpc ]
+
+- name: Generate VPC configuration
+  template:
+    src: "vpc.j2"
+    dest: "result/{{ item.SWA_HOST }}-vpc-{{ item.VPC_ID }}-confg.{{ ansible_date_time.iso8601_basic_short }}.txt"
+  loop: "{{ csventry.list }}"
+  when: not "#" in item.SWA_HOST
+  tags: [ ciscoconfgen, vpc ]
+
+#- name: Print to STDOUT
+#  debug:
+#    msg:
+#     - 'Eqpmt Name: {{ item.EQPMT_NAME }}'
+#  loop: "{{ csventry.list }}"
+

@@ -1,0 +1,7 @@
+- name: Generate Interfaces configuration
+  template:
+    src: "interfaces.j2"
+    dest: "result/interfaces-intcreate-confg.{{ ansible_date_time.iso8601_basic_short }}.txt"
+  loop: "{{ chassis }}"
+  tags: [ ciscoconfgen, intcreate ]
+
