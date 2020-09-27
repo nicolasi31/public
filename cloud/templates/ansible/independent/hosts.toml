@@ -1,0 +1,44 @@
+[all:children]
+linux_hosts
+cisco_devices
+
+
+[linux_hosts:children]
+alpine_hosts
+centos_hosts
+debian_hosts
+[linux_hosts:vars]
+domainname=example.com
+
+
+[cisco_devices:children]
+rtr
+srt
+[cisco_devices:vars]
+gather_facts=false
+ansible_user=root
+domainname=example.com
+
+
+[alpine_hosts]
+alpine01 ansible_host=192.168.0.41 hostname=alpine1
+[alpine_hosts:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+[centos_hosts]
+centos01 ansible_host=192.168.0.49 hostname=centos01
+[centos_hosts:vars]
+ansible_python_interpreter=/usr/libexec/platform-python
+
+[debian_hosts]
+debian01 ansible_host=192.168.0.44 hostname=debian01
+[debian_hosts:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+
+[rtr]
+rtr1lab ansible_host=192.168.0.1 hostname=rtr1lab
+
+[srt]
+srt1lab ansible_host=192.168.0.2 hostname=srt1lab
+

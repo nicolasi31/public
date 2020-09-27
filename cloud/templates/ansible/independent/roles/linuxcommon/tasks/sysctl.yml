@@ -11,7 +11,7 @@
 - name: "Common - Sysctl - Update hostname"
   sysctl:
     name: kernel.hostname
-    value: '{{ hostname.short }}'
+    value: '{{ hostname }}'
     sysctl_set: yes
     state: present
   tags: [ common, sysctl ]
@@ -19,7 +19,7 @@
 - name: "Common - Sysctl - Update domainname"
   sysctl:
     name: kernel.domainname
-    value: '{{ hostname.domain }}'
+    value: '{{ domainname }}'
     sysctl_set: yes
     state: present
   tags: [ common, sysctl ]

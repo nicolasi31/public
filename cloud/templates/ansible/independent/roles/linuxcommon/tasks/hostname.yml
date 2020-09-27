@@ -1,13 +1,13 @@
 ---
 - name: "Common - Hostname - Ensure hostname is set"
   hostname:
-    name: "{{ hostname.short }}.{{ hostname.domain }}"
+    name: "{{ hostname }}.{{ domainname }}"
   tags: [ common, hostname ]
 
 - name: "Common - Hostname - Add hostname in /etc/hosts"
   lineinfile:
     path: /etc/hosts
-    line: "{{ ansible_default_ipv4.address }} {{ hostname.short }}.{{ hostname.domain }} {{ hostname.short }}"
+    line: "{{ ansible_default_ipv4.address }} {{ hostname }}.{{ domainname }} {{ hostname }}"
     create: yes
   tags: [ common, hostname ]
 

@@ -14,7 +14,7 @@
   tags: [ nginx, centos, ssl ]
 
 - name: "NGINX - {{ ansible_distribution }} - Generate Certificate"
-  command : openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/pki/nginx/private/server.key -out /etc/pki/nginx/server.crt -subj "/C=FR/ST=OCCITANIE/L=TOULOUSE/CN={{ hostname.short }}.{{ hostname.domain }}"
+  command : openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/pki/nginx/private/server.key -out /etc/pki/nginx/server.crt -subj "/C=FR/ST=OCCITANIE/L=TOULOUSE/CN={{ hostname }}.{{ domainname }}"
   tags: [ nginx, centos, ssl ]
 
 - name: "NGINX - {{ ansible_distribution }} - Create passwd directory"

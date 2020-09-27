@@ -1,7 +1,7 @@
 ---
 - name: "Common - Get Facts - Save"
   shell: |
-     echo "{{ ansible_facts }}" > ${HOME}/ansible.getfacts.{{ hostname.short }}.{{ ansible_date_time.iso8601_basic_short }}.txt
+     echo "{{ ansible_facts }}" > ${HOME}/ansible.getfacts.{{ hostname }}.{{ ansible_date_time.iso8601_basic_short }}.txt
   args:
     executable: /bin/bash
   tags: [ common, resolved ]

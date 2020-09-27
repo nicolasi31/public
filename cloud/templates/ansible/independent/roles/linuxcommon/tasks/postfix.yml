@@ -10,14 +10,14 @@
   lineinfile:
     path: /etc/postfix/main.cf
     regexp: "^#?myhostname"
-    line: myhostname={{ hostname.short }}
+    line: myhostname={{ hostname }}
   tags: [ common, postfix ]
 
 - name: "Common - Postfix - Update domain"
   lineinfile:
     path: /etc/postfix/main.cf
     regexp: "^#?mydomain"
-    line: mydomain={{ hostname.domain }}
+    line: mydomain={{ domainname }}
   tags: [ common, postfix ]
   notify:
   - restart postfix

@@ -1,0 +1,57 @@
+all:
+  children:
+    linux_hosts:
+      children:
+        alpine_hosts:
+          hosts:
+            alpine01:
+              ansible_host: 192.168.0.41
+              hostname: alpine01
+#              hostname:
+#                domainname: example.com
+#                short: alpine01
+          vars:
+            ansible_python_interpreter: /usr/bin/python3
+        centos_hosts:
+          hosts:
+            centos01:
+              ansible_host: 192.168.0.49
+              hostname: centos01
+          vars:
+            ansible_python_interpreter: /usr/libexec/platform-python
+#            nginxwebroot: /usr/share/nginx/html
+#            collectdconffile: /etc/collectd.conf
+#            collectdpackages:
+#              - collectd
+#              - collectd-rrdtool
+#              - collectd-disk
+        debian_hosts:
+          hosts:
+            debian01:
+              ansible_host: 192.168.0.44
+              hostname: debian01
+          vars:
+            ansible_python_interpreter: /usr/bin/python3
+#            nginxwebroot: /var/www/html
+#            collectdconffile: /etc/collectd/collectd.conf
+#            collectdpackages:
+#              - collectd
+      vars:
+        ansible_user: root
+        domainname: example.com
+    cisco_devices:
+      children:
+        rtr:
+          hosts:
+            rtr1lab:
+              ansible_host: 192.168.0.1
+              hostname: rtr1lab
+        srt:
+          hosts:
+            srt1lab:
+              ansible_host: 192.168.0.2
+              hostname: srt1lab
+      vars:
+        ansible_user: root
+        domainname: example.com
+    ungrouped: {}

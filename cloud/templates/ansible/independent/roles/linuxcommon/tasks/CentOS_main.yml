@@ -12,8 +12,8 @@
   tags: [ centos, etckeeper ]
 
 - name: "{{ ansible_distribution }} - Network - Firewall"
-  include_tasks: "{{ ansible_distribution }}_firewall.yml"
-  tags: [ centos, network, firewall ]
+  include_tasks: "{{ ansible_distribution }}_firewalld.yml"
+  tags: [ centos, network, firewalld ]
 
 - name: "{{ ansible_distribution }} - SELinux"
   include_tasks: "{{ ansible_distribution }}_selinux.yml"
