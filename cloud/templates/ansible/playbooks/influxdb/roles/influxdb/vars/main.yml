@@ -1,0 +1,4 @@
+influxdb_ip_address: 127.0.0.1
+influxdb_ip_port: 8086
+influxdb_database_name: mydb
+

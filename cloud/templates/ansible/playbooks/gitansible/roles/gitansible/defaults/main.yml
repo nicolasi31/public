@@ -1,0 +1,9 @@
+---
+#git_url: 'git@bitbucket.org:nicolasi31/public.git'
+#git_key: "{{ lookup('file','./id_rsa') }}"
+#git_branch: 'master'
+#git_msg: 'update files with ansible'
+#git_remove_local: false
+#git_username: nicolasi31
+#git_email: inchauspe.nicolas@gmail.com
+

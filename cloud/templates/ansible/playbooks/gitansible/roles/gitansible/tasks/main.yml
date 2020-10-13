@@ -1,0 +1,56 @@
+---
+
+- name: set repo path
+  set_fact:
+    git_repo_path: "{{ git_url | regex_search('/(.+).git') | regex_replace('.git', '') }}"
+
+- name: git clone
+  git:
+   repo: "{{ git_url }}"
+   dest: "{{ playbook_dir }}/{{ git_repo_path }}"
+   accept_hostkey: yes
+   key_file: "{{ git_key }}"
+#   key_file: "{{ lookup('file','~/.ssh/id_rsa') }}"
+#   key_file: "{{ git_temp_file.path }}"
+
+- name: create file in repo
+  copy:
+    dest: "{{ git_repo_path | regex_replace('^/', '') }}/time.yml"
+    content: "{{ ansible_date_time | to_nice_yaml}}"
+
+- name: git status
+  shell: git status
+  args:
+    chdir: "{{ playbook_dir }}{{ git_repo_path }}"
+  register: git_add_status
+
+- name: git username
+  shell: git config user.name "{{ git_username }}"
+  args:
+    chdir: "{{ playbook_dir }}{{ git_repo_path }}"
+  when: git_username is defined
+
+- name: git email
+  shell: git config user.email "{{ git_email }}"
+  args:
+    chdir: "{{ playbook_dir }}{{ git_repo_path }}"
+  when: git_email is defined
+
+- name: git add all new files
+  shell: git add -A
+  args:
+    chdir: "{{ playbook_dir }}{{ git_repo_path }}"
+
+- name: git commit
+  shell: git commit -a -m "'{{ git_msg }}'"
+  args:
+    chdir: "{{ playbook_dir }}{{ git_repo_path }}"
+  ignore_errors: true
+
+- name: git push
+  shell: git push --force
+  args:
+    chdir: "{{ playbook_dir }}{{ git_repo_path }}"
+#  environment:
+#    GIT_SSH: "{{ playbook_dir }}/.ssh/ssh"
+

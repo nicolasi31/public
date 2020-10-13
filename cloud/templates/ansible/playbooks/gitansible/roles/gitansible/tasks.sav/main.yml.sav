@@ -1,0 +1,16 @@
+---
+- name: git pull
+  include_role:
+    name: ansible-git
+    tasks_from: pull
+
+- name: create file in repo
+  copy:
+    dest: ansible-git/time.yml
+    content: "{{ ansible_date_time | to_nice_yaml}}"
+
+- name: git push
+  include_role:
+    name: ansible-git
+    tasks_from: push
+

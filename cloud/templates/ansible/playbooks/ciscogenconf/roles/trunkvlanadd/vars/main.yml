@@ -1,0 +1,36 @@
+---
+chassis:
+  - name: SRD1POD1
+    interface_list:
+    - interface: Po1000
+      vlan: 100
+    - interface: Po1001
+      vlan: 101
+    - interface: Po1002
+      vlan: ""
+    - interface: Po1003
+      vlan: ""
+    - interface: Po1004
+      vlan:
+    - interface: Po1005
+      vlan: 1000
+    - interface: Po1006
+      vlan: 100
+    commonvlan: 3000
+  - name: SRD2POD1
+    interface_list:
+    - interface: Po1000
+      vlan: 300
+    - interface: Po1001
+      vlan: 400
+    - interface: Po1002
+      vlan: ""
+    - interface: Po1003
+      vlan: ""
+    - interface: Po1004
+      vlan: 100
+    - interface: Po1005
+      vlan:
+    - interface: Po1006
+      vlan: 100
+    commonvlan: "4000"

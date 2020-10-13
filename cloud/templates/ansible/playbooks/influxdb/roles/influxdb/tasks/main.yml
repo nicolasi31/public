@@ -1,0 +1,21 @@
+- name: Write points into database
+  community.general.influxdb_write:
+      hostname: "{{ influxdb_ip_address }}"
+      port: "{{ influxdb_ip_port }}"
+      database_name: "{{ influxdb_database_name }}"
+      data_points:
+        - measurement: connections
+          tags:
+            host: server01
+            region: us-west
+          time: "{{ ansible_date_time.iso8601 }}"
+          fields:
+            value: 5005
+        - measurement: connections
+          tags:
+            host: server02
+            region: us-east
+          time: "{{ ansible_date_time.iso8601 }}"
+          fields:
+            value: 5001
+

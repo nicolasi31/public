@@ -1,0 +1,18 @@
+---
+all:
+  children:
+    mygroup:
+      hosts:
+        localhost:
+          ansible_connection: local
+          ansible_host: localhost
+          ansible_python_interpreter: /usr/bin/python3
+          gather_facts: false
+          git_url: 'git@bitbucket.org:poubl31/privaterepo.git'
+          git_key: "{{ lookup('file','~/.ssh/id_rsa') }}"
+          git_branch: 'master'
+          git_msg: 'update files with ansible'
+          git_remove_local: false
+          git_username: poubl31
+          git_email: poubl31@gmail.com
+
