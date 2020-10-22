@@ -1,0 +1,132 @@
+---
+- name: "Network devices information gathering"
+  hosts:
+    sbxnxos
+    sbxiosxe
+    sbxiosxr
+  gather_facts: no
+  timeout: 240
+  vars:
+    ansible_command_timeout: 240
+    ansible_connection_timeout: 240
+    resultdir: "/tmp/facts"
+    timecode: "{{ lookup('pipe','date +%Y%m%d%H') }}"
+    intfsjsonfile: "{{ resultdir }}/{{ inventory_hostname }}-facts-interfaces.txt"
+    vlansjsonfile: "{{ resultdir }}/{{ inventory_hostname }}-facts-vlans.txt"
+    lacpjsonfile: "{{ resultdir }}/{{ inventory_hostname }}-facts-lacp.txt"
+    intfsmdfile: "{{ resultdir }}/{{ inventory_hostname }}-facts-interfaces.md"
+    vlansmdfile: "{{ resultdir }}/{{ inventory_hostname }}-facts-vlans.md"
+    lacpmdfile: "{{ resultdir }}/{{ inventory_hostname }}-facts-vlans.md"
+    configfile: "{{ inventory_hostname }}-confg.txt"
+    git_url: "git@bitbucket.org:poubl31/automationprivaterepo.git"
+    git_username: poubl31
+    git_email: poubl31@gmail.com
+    git_key: "{{ lookup('file','~/.ssh/id_rsa') }}"
+    git_branch: "master"
+    git_msg: "update files with ansible"
+    git_remove_local: false
+  tasks:
+##########################################################
+#                                                        #
+#          {{ resultdir }} directory creation            #
+#                                                        #
+##########################################################
+    - name: "Create {{ resultdir }} directory"
+      tags: [ cisco, nxos, stdout ]
+      run_once: true
+      file:
+        path: "{{ resultdir }}"
+        state: directory
+        mode: "0755"
+##########################################################
+#                                                        #
+#                 Git initialisation                     #
+#                                                        #
+##########################################################
+    - name: "GIT clone"
+      tags: [ cisco, nxos, ios, iosxr, juniper, junos, git ]
+      run_once: true
+      git:
+        repo: "{{ git_url }}"
+        dest: "{{ resultdir }}"
+        accept_hostkey: yes
+        key_file: "{{ git_key }}"
+    - name: "GIT username"
+      when: git_username is defined
+      tags: [ cisco, nxos, ios, iosxr, juniper, junos, git ]
+      run_once: true
+      shell: git config user.name "{{ git_username }}"
+      args:
+        chdir: "{{ resultdir }}"
+    - name: "GIT email"
+      when: git_email is defined
+      run_once: true
+      tags: [ cisco, nxos, ios, iosxr, juniper, junos, git ]
+      shell: git config user.email "{{ git_email }}"
+      args:
+        chdir: "{{ resultdir }}"
+##########################################################
+#                                                        #
+#                 Device configuration                   #
+#                                                        #
+##########################################################
+    - when: ansible_network_os == "nxos"                         ####### NXOS  #######
+      name: "NXOS - Configuration backup"
+      tags: [ cisco, nxos, config ]
+      ignore_errors: true
+      cisco.nxos.nxos_config:
+        backup: yes
+        backup_options:
+          filename: "{{ configfile }}"
+          dir_path: "{{ resultdir }}"
+    - when: ansible_network_os == "ios"                          #######  IOS  #######
+      name: "IOS - Configuration backup"
+      tags: [ cisco, ios, config ]
+      ignore_errors: true
+      cisco.ios.ios_config:
+        backup: yes
+        backup_options:
+          filename: "{{ configfile }}"
+          dir_path: "{{ resultdir }}"
+    - when: ansible_network_os == "iosxr"                        ####### IOSXR #######
+      name: "IOSXR - Configuration backup"
+      tags: [ cisco, iosxr, config ]
+      ignore_errors: true
+      cisco.iosxr.iosxr_config:
+        backup: yes
+        backup_options:
+          filename: "{{ configfile }}"
+          dir_path: "{{ resultdir }}"
+    - when: ansible_network_os == "junos"                        ####### JUNOS #######
+      name: "JUNOS - Configuration backup"
+      tags: [ juniper, junos, config ]
+      ignore_errors: true
+      junipernetworks.junos.junos_config:
+        backup: yes
+        backup_options:
+          filename: "{{ configfile }}"
+          dir_path: "{{ resultdir }}"
+##########################################################
+#                                                        #
+#                       Git Push                         #
+#                                                        #
+##########################################################
+    - name: "GIT add all new files"
+      run_once: true
+      tags: [ cisco, nxos, ios, iosxr, juniper, junos, git ]
+      shell: git add -A
+      args:
+        chdir: "{{ resultdir }}"
+    - name: "GIT commit"
+      run_once: true
+      tags: [ cisco, nxos, ios, iosxr, juniper, junos, git ]
+      shell: 'git commit -a -m "{{ git_msg }}"'
+      args:
+        chdir: "{{ resultdir }}"
+      ignore_errors: true
+    - name: "GIT push"
+      run_once: true
+      tags: [ cisco, nxos, ios, iosxr, juniper, junos, git ]
+      shell: git push --force
+      args:
+        chdir: "{{ resultdir }}"

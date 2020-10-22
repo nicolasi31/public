@@ -1,0 +1,29 @@
+---
+all:
+  children:
+    sbx:
+      hosts:
+        sbxnxos:
+          ansible_host: sbx-nxos-mgmt.cisco.com
+          ansible_connection: httpapi
+          ansible_user: "admin"
+          ansible_password: "Admin_1234!"
+          ansible_httpapi_remote_user: "admin"
+          ansible_httpapi_password: "Admin_1234!"
+          ansible_httpapi_port: 443
+          ansible_httpapi_use_ssl: yes
+          ansible_httpapi_validate_certs: no
+          ansible_network_os: nxos
+          ansible_command_timeout: 120
+        sbxiosxr:
+          ansible_connection: network_cli
+          ansible_network_os: iosxr
+          ansible_host: sbx-iosxr-mgmt.cisco.com
+          ansible_user: "admin"
+          ansible_password: "C1sco12345"
+          ansible_port: "8181"
+      vars:
+          resultdir: "result"
+          ansible_python_interpreter: /usr/bin/python
+#          gather_facts: false
+

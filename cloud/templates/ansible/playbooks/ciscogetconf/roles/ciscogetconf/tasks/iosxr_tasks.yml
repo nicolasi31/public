@@ -1,0 +1,60 @@
+- name: "{{ ansible_network_os }} - {{ inventory_hostname }} configuration backup"
+  cisco.iosxr.iosxr_config:
+    backup: yes
+    backup_options:
+      filename: "{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-backup.cfg"
+      dir_path: "{{ resultdir }}"
+  tags: [ cisco, iosxr ]
+#  when: ansible_network_os == "iosxr"
+  vars:
+    - gather_facts: no
+
+- name: "{{ ansible_network_os }} - Dump Inventory vars to File"
+  copy: content="{{ hostvars[inventory_hostname] }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-inventoryvars.cfg"
+  tags: [ cisco, iosxr ]
+
+- name: "{{ ansible_network_os }} - Get Facts - all"
+  iosxr_facts:
+    gather_subset: all
+#    gather_subset: "!config"
+  tags: [ cisco, iosxr ]
+  register: "iosxrfacts"
+- name: "{{ ansible_network_os }} - Dump Facts to File - all"
+  copy: content="{{ iosxrfacts }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts.cfg"
+  tags: [ cisco, iosxr ]
+
+- name: "{{ ansible_network_os }} - Get Facts - config"
+  iosxr_facts:
+    gather_subset: "config"
+  tags: [ cisco, iosxr ]
+  register: "iosxrfactsconfig"
+- name: "{{ ansible_network_os }} - Dump Facts to File - config"
+  copy: content="{{ iosxrfactsconfig }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-config.cfg"
+  tags: [ cisco, iosxr ]
+
+- name: "{{ ansible_network_os }} - Get Facts - default"
+  iosxr_facts:
+    gather_subset: "default"
+  tags: [ cisco, iosxr ]
+  register: "iosxrfactsdefault"
+- name: "{{ ansible_network_os }} - Dump Facts to File - default"
+  copy: content="{{ iosxrfactsdefault }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-default.cfg"
+  tags: [ cisco, iosxr ]
+
+- name: "{{ ansible_network_os }} - Get Facts - hardware"
+  iosxr_facts:
+    gather_subset: "hardware"
+  tags: [ cisco, iosxr ]
+  register: "iosxrfactshardware"
+- name: "{{ ansible_network_os }} - Dump Facts to File - hardware"
+  copy: content="{{ iosxrfactshardware }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-hardware.cfg"
+  tags: [ cisco, iosxr ]
+
+- name: "{{ ansible_network_os }} - Get Facts - interfaces"
+  iosxr_facts:
+    gather_subset: "interfaces"
+  tags: [ cisco, iosxr ]
+  register: "iosxrfactsinterfaces"
+- name: "{{ ansible_network_os }} - Dump Facts to File - interfaces"
+  copy: content="{{ iosxrfactsinterfaces }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-interfaces.cfg"
+  tags: [ cisco, iosxr ]

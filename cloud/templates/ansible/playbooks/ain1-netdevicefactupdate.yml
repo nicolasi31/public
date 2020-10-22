@@ -1,0 +1,119 @@
+---
+- name: "Network devices information gathering"
+  hosts:
+    all
+    # sbxnxos
+    # sbxiosxe
+    # sbxiosxr
+  connection: local
+  gather_facts: no
+  timeout: 720
+  vars:
+    timecode: "{{ lookup('pipe','date +%Y%m%d%H') }}"
+    gitrepodir: "/tmp/facts"
+    subdir: "hostsdir"
+    factsjsonfile: "{{ gitrepodir }}/{{ subdir }}/{{ inventory_hostname }}/{{ inventory_hostname }}-facts.json"
+    itemtogather: "ansible_facts.ansible_net_all_ipv4_addresses"
+    git_url: "git@bitbucket.org:poubl31/automationprivaterepo.git"
+    git_key: "{{ lookup('file','~/.ssh/id_rsa') }}"
+    git_msg: "update files with ansible"
+  tasks:
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     {{ gitrepodir }}/{{ subdir }}/{{ inventory_hostname }} directory creation     #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "Create {{ gitrepodir }}/{{ subdir }}/{{ inventory_hostname }}" ##     DIR       ##
+      file: path="{{ gitrepodir }}/{{ subdir }}/{{ inventory_hostname }}" state=directory mode="0755"
+      tags: [ json, git ]
+    - name: "Check that {{ inventory_hostname }} facts file exists"        ##     GIT       ##
+      stat:
+        path: "{{ factsjsonfile }}"
+      register: jsonfilecheck
+      tags: [ json, git ]
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Git initialisation                                   #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "GIT clone"                                      ##     GIT       ##
+      git: repo="{{ git_url }}" dest="{{ gitrepodir }}" accept_hostkey="yes" key_file="{{ git_key }}"
+      tags: [ json, git ]
+      run_once: true
+      when: not jsonfilecheck.stat.exists
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Dump Ansible Facts Dictionary                        #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "Include Device Vars"
+      include_vars:
+        name: importedfact
+        file: "{{ gitrepodir }}/{{ subdir }}/{{ inventory_hostname }}/{{ inventory_hostname }}-facts.json"
+      tags: [ json ]
+    - name: "Dump Debug Vars Example"
+      debug:
+        msg: "{{ importedfact | json_query(query) | to_yaml }}"
+      vars:
+        query: "{{ itemtogather }}"
+      tags: [ json, example, never ]
+
+    - name: "Dump Debug Vars Example"
+      debug:
+        msg: "{{ importedfact | json_query(query) | to_yaml }}"
+      vars:
+        query: "ansible_facts.ansible_network_resources.l3_interfaces"
+      tags: [ json, l3, never ]
+
+        # query: importedfact.ansible_facts.ansible_network_resources
+        # query: "{{ importedfact.ansible_facts.ansible_network_resources.l3_interfaces }}"
+        # query: "{{ itemtogather }}"
+      # when: importedfact.ansible_facts.ansible_network_resources.l3_interfaces is defined
+
+
+    - name: "Update Infos File - L3 par host"                ##     L3        ##
+      shell: |
+        /bin/echo -e "|{{ item.name | default('null') }}"\
+        "|{{ item | json_query(query) | default('null') | flatten }}|"\
+        "" >> "/tmp/toto.json"
+      args:
+        executable: /bin/bash
+      vars:
+        query: "ipv4[*].address"
+      loop: "{{ importedfact.ansible_facts.ansible_network_resources.l3_interfaces }}"
+      tags: [ json, l3, never ]
+      when: importedfact.ansible_facts.ansible_network_resources.l3_interfaces is defined
+
+    - name: "Update {{ inventory_hostname }}-infos.md"
+      template:
+        src: "{{ playbook_dir }}/defaulthost-infos.j2"
+        dest: "{{ gitrepodir }}/{{ subdir }}/{{ inventory_hostname }}/{{ inventory_hostname }}-infos.md"
+
+    - name: "Update {{ inventory_hostname }}-interfaces.csv"
+      template:
+        src: "{{ playbook_dir }}/defaulthost-interfaces.j2"
+        dest: "{{ gitrepodir }}/{{ subdir }}/{{ inventory_hostname }}/{{ inventory_hostname }}-interfaces.csv"
+
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     GIT Push                                             #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "GIT add all new files"
+      shell: |
+        git add -A
+        git commit -a -m "{{ git_msg }}"
+        git push --force
+      args:
+        chdir: "{{ gitrepodir }}"
+      tags: [ json, git ]
+      run_once: true
+

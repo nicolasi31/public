@@ -1,5 +1,13 @@
 ---
 - hosts:
-  - sbx
+#  - RTR1TLSLAB
+#  - SRT1TLSLAB
+#  - SWA1GNS3TEST
+#  - SRD1QVIADMHB1VLD
+#  - SWA01103XATADMHB1VLD
+#  - tlslab
+#  - sbx
+  - sbxiosxr
+#  - sbxnxos
   roles:
     - ciscogetconf

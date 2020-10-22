@@ -1,0 +1,16 @@
+- name: "IOSXR - Get Facts - interfaces"
+  cisco.iosxr.iosxr_facts:
+    gather_subset:
+    - '!all'
+    - '!min'
+    gather_network_resources:
+    - interfaces
+  register: "iosxrinterfaceslist"
+  when: ansible_network_os == "iosxr"
+
+- name: "IOSXR - Dump Facts to File - interfaces"
+  copy: content="{{ iosxrinterfaceslist | to_json }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-interfaces.cfg"
+#  copy: content="{{ iosxrinterfaceslist | to_yaml }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-interfaces.cfg"
+#  copy: content="{{ iosxrinterfaceslist | dict2items }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-interfaces.cfg"
+  when: ansible_network_os == "iosxr"
+

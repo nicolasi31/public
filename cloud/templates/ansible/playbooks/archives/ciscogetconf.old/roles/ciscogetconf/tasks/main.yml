@@ -1,0 +1,58 @@
+- name: "NXOS {{ ansible_net__hostname }} backup"
+  cisco.nxos.nxos_config:
+    backup: yes
+    backup_options:
+      filename: "{{ ansible_net__hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-backup.cfg"
+      dir_path: "{{ resultdir }}"
+  when: ansible_net_system == "nxos"
+  vars:
+    - gather_facts: no
+
+- name: "IOS {{ ansible_net__hostname }} backup"
+  cisco.ios.ios_config:
+    backup: yes
+    backup_options:
+      filename: "{{ ansible_net__hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-backup.cfg"
+      dir_path: "{{ resultdir }}"
+  when: ansible_net_system == "ios"
+  vars:
+    - gather_facts: no
+
+- name: "JUNOS {{ ansible_net__hostname }} backup"
+  junipernetworks.junos.junos_config:
+    backup: yes
+    backup_options:
+      filename: "{{ ansible_net__hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-backup.cfg"
+      dir_path: "{{ resultdir }}"
+  when: ansible_net_system == "junos"
+  vars:
+    - gather_facts: no
+
+- name: "Get NXOS Facts"
+  nxos_facts:
+    gather_subset: all
+  register: "nxosfacts"
+
+- name: "Dump NXOS Facts to File"
+  copy: content="{{ nxosfacts }}" dest="{{ resultdir }}/{{ ansible_net__hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts.cfg"
+  when: ansible_net_system == "nxos"
+
+- name: "Dump Inventory vars to File"
+  copy: content="{{ hostvars[inventory_hostname] }}" dest="{{ resultdir }}/{{ ansible_net__hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-inventoryvars.cfg"
+  when: ansible_net_system == "nxos"
+
+
+
+
+
+
+
+#- name: "Dump NXOS Facts"
+#  debug: msg="{{ nxosfacts }}"
+#
+#- name: Display all variables/facts known for a host
+#  debug:
+#    var: hostvars[inventory_hostname]
+#    verbosity: 4
+
+

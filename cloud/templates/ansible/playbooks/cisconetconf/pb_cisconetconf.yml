@@ -1,0 +1,8 @@
+---
+- hosts:
+#  - sbx
+#  - sbxiosxe
+#  - sbxiosxr
+  - sbxnxos
+  roles:
+    - cisconetconf

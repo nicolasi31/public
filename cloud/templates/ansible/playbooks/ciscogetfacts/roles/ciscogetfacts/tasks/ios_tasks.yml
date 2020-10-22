@@ -1,0 +1,16 @@
+- name: "IOS - Get Facts - interfaces"
+  cisco.ios.ios_facts:
+    gather_subset:
+    - '!all'
+    - '!min'
+    gather_network_resources:
+    - interfaces
+  register: "iosinterfaceslist"
+  when: ansible_network_os == "ios"
+
+- name: "IOS - Dump Facts to File - interfaces"
+  copy: content="{{ iosinterfaceslist | to_json }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-interfaces.cfg"
+#  copy: content="{{ iosinterfaceslist | to_yaml }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-interfaces.cfg"
+#  copy: content="{{ iosinterfaceslist | dict2items }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-interfaces.cfg"
+  when: ansible_network_os == "ios"
+

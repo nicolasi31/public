@@ -1,0 +1,76 @@
+---
+- name: "NXOS All in One playbook"
+  hosts: all
+  vars:
+    resultdir: "/tmp/facts"
+    timecode: "{{ lookup('pipe','date +%Y%m%d%H') }}"
+    commandtorun: "show version"
+  tasks:
+    - name: "NXOS task"
+      when: ansible_network_os == "nxos"
+      tags: [ cisco, nxos, stdout ]
+      nxos_command:
+        commands:
+        - command: "{{ commandtorun }}"
+          output: text
+      register: "nxoscmdresult"
+    - name: "NXOS Dump to file"
+      when: ansible_network_os == "nxos"
+      tags: [ cisco, nxos ]
+      copy: content="{{ nxoscmdresult }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ timecode }}-cmd.json"
+    - name: "NXOS dump to stdout"
+      when: ansible_network_os == "nxos"
+      tags: [ cisco, stdout, never ]
+      debug:
+        msg: "{{ nxoscmdresult }}"
+#        var: nxoscmdresult
+
+
+- name: "IOSXR All in One playbook"
+  hosts: all
+  vars:
+    resultdir: "/tmp/facts"
+    timecode: "{{ lookup('pipe','date +%Y%m%d%H') }}"
+    commandtorun: "show version"
+  tasks:
+    - name: "IOSXR task"
+      when: ansible_network_os == "iosxr"
+      tags: [ cisco, iosxr, stdout ]
+      iosxr_command:
+        commands:
+        - command: "{{ commandtorun }}"
+      register: "iosxrcmdresult"
+    - name: "IOSXR Dump to file"
+      when: ansible_network_os == "iosxr"
+      tags: [ cisco, ios ]
+      copy: content="{{ iosxrcmdresult }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ timecode }}-cmd.cfg"
+    - name: "IOSXR dump to stdout"
+      when: ansible_network_os == "iosxr"
+      tags: [ cisco, stdout, never ]
+      debug:
+        msg: "{{ iosxrcmdresult }}"
+
+
+- name: "IOS All in One playbook"
+  hosts: all
+  vars:
+    resultdir: "/tmp/facts"
+    timecode: "{{ lookup('pipe','date +%Y%m%d%H') }}"
+    commandtorun: "show version"
+  tasks:
+    - name: "IOS task"
+      when: ansible_network_os == "ios"
+      tags: [ cisco, ios, stdout ]
+      ios_command:
+        commands:
+        - "{{ commandtorun }}"
+      register: "ioscmdresult"
+    - name: "IOS Dump to file"
+      when: ansible_network_os == "ios"
+      tags: [ cisco, ios ]
+      copy: content="{{ ioscmdresult }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ timecode }}-cmd.cfg"
+    - name: "IOS dump to stdout"
+      when: ansible_network_os == "ios"
+      tags: [ cisco, stdout, never ]
+      debug:
+        msg: "{{ ioscmdresult }}"

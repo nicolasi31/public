@@ -1,0 +1,7 @@
+---
+- hosts:
+#  - sbx
+#  - sbxiosxr
+  - sbxnxos
+  roles:
+    - ciscogetfacts

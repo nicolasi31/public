@@ -1,0 +1,331 @@
+---
+- name: "Network devices information gathering"
+  hosts:
+    sbxnxos
+    sbxiosxe
+    sbxiosxr
+  gather_facts: no
+  timeout: 240
+  vars:
+    ansible_command_timeout: 240
+    ansible_connection_timeout: 240
+    resultdir: "/tmp/facts"
+    timecode: "{{ lookup('pipe','date +%Y%m%d%H') }}"
+    intfsjsonfile: "{{ resultdir }}/{{ inventory_hostname }}-facts-interfaces.txt"
+    vlansjsonfile: "{{ resultdir }}/{{ inventory_hostname }}-facts-vlans.txt"
+    lacpjsonfile: "{{ resultdir }}/{{ inventory_hostname }}-facts-lacp.txt"
+    intfsmdfile: "{{ resultdir }}/{{ inventory_hostname }}-facts-interfaces.md"
+    vlansmdfile: "{{ resultdir }}/{{ inventory_hostname }}-facts-vlans.md"
+    lacpmdfile: "{{ resultdir }}/{{ inventory_hostname }}-facts-vlans.md"
+    configfile: "{{ inventory_hostname }}-confg.txt"
+    git_url: "git@bitbucket.org:poubl31/automationprivaterepo.git"
+    git_username: poubl31
+    git_email: poubl31@gmail.com
+    git_key: "{{ lookup('file','~/.ssh/id_rsa') }}"
+    git_branch: "master"
+    git_msg: "update files with ansible"
+    git_remove_local: false
+  tasks:
+##########################################################
+#                                                        #
+#          {{ resultdir }} directory creation            #
+#                                                        #
+##########################################################
+    - name: "Create {{ resultdir }} directory"
+      tags: [ cisco, nxos, stdout ]
+      run_once: true
+      file:
+        path: "{{ resultdir }}"
+        state: directory
+        mode: "0755"
+##########################################################
+#                                                        #
+#                 Git initialisation                     #
+#                                                        #
+##########################################################
+    - name: "GIT clone"
+      tags: [ cisco, nxos, ios, iosxr, juniper, junos, git ]
+      run_once: true
+      git:
+        repo: "{{ git_url }}"
+        dest: "{{ resultdir }}"
+        accept_hostkey: yes
+        key_file: "{{ git_key }}"
+    - name: "GIT username"
+      when: git_username is defined
+      tags: [ cisco, nxos, ios, iosxr, juniper, junos, git ]
+      run_once: true
+      shell: git config user.name "{{ git_username }}"
+      args:
+        chdir: "{{ resultdir }}"
+    - name: "GIT email"
+      when: git_email is defined
+      run_once: true
+      tags: [ cisco, nxos, ios, iosxr, juniper, junos, git ]
+      shell: git config user.email "{{ git_email }}"
+      args:
+        chdir: "{{ resultdir }}"
+##########################################################
+#                                                        #
+#                 Device configuration                   #
+#                                                        #
+##########################################################
+    - when: ansible_network_os == "nxos"                         ####### NXOS  #######
+      name: "NXOS - Configuration backup"
+      tags: [ cisco, nxos, config ]
+      ignore_errors: true
+      cisco.nxos.nxos_config:
+        backup: yes
+        backup_options:
+          filename: "{{ configfile }}"
+          dir_path: "{{ resultdir }}"
+    - when: ansible_network_os == "ios"                          #######  IOS  #######
+      name: "IOS - Configuration backup"
+      tags: [ cisco, ios, config ]
+      ignore_errors: true
+      cisco.ios.ios_config:
+        backup: yes
+        backup_options:
+          filename: "{{ configfile }}"
+          dir_path: "{{ resultdir }}"
+    - when: ansible_network_os == "iosxr"                        ####### IOSXR #######
+      name: "IOSXR - Configuration backup"
+      tags: [ cisco, iosxr, config ]
+      ignore_errors: true
+      cisco.iosxr.iosxr_config:
+        backup: yes
+        backup_options:
+          filename: "{{ configfile }}"
+          dir_path: "{{ resultdir }}"
+    - when: ansible_network_os == "junos"                        ####### JUNOS #######
+      name: "JUNOS - Configuration backup"
+      tags: [ juniper, junos, config ]
+      ignore_errors: true
+      junipernetworks.junos.junos_config:
+        backup: yes
+        backup_options:
+          filename: "{{ configfile }}"
+          dir_path: "{{ resultdir }}"
+##########################################################
+#                                                        #
+#                Get Interfaces facts                    #
+#                                                        #
+##########################################################
+    - when: ansible_network_os == "nxos"                         ####### NXOS  #######
+      name: "NXOS - Get interfaces facts"
+      tags: [ cisco, nxos, stdout ]
+      ignore_errors: true
+      cisco.nxos.nxos_facts:
+        gather_subset:
+        - '!all'
+        - '!min'
+        gather_network_resources:
+        - interfaces
+      register: "nxosinterfaceslist"
+    - when: ansible_network_os == "ios"                          ####### IOS   #######
+      name: "IOS - Get interfaces facts"
+      tags: [ cisco, ios, stdout ]
+      ignore_errors: true
+      cisco.ios.ios_facts:
+        gather_subset:
+        - '!all'
+        - '!min'
+        gather_network_resources:
+        - interfaces
+      register: "iosinterfaceslist"
+    - when: ansible_network_os == "iosxr"                         ####### IOSXR #######
+      name: "IOSXR - Get interfaces facts"
+      tags: [ cisco, iosxr, stdout ]
+      ignore_errors: true
+      cisco.iosxr.iosxr_facts:
+        gather_subset:
+        - '!all'
+        - '!min'
+        gather_network_resources:
+        - interfaces
+      register: "iosxrinterfaceslist"
+##########################################################
+#                                                        #
+#                Dump Interfaces facts                   #
+#                                                        #
+##########################################################
+    - when: ansible_network_os == "nxos"                         ####### NXOS  #######
+      name: "NXOS - Dump interfaces facts to file"
+      tags: [ cisco, nxos ]
+      ignore_errors: true
+      copy:
+        content="{{ nxosinterfaceslist.ansible_facts.ansible_network_resources.interfaces | to_json }}"
+        dest="{{ intfsjsonfile }}"
+    - when: ansible_network_os == "ios"                         ####### IOS   #######
+      name: "IOS - Dump interfaces facts to file"
+      tags: [ cisco, ios ]
+      ignore_errors: true
+      copy:
+        content="{{ iosinterfaceslist.ansible_facts.ansible_network_resources.interfaces | to_json }}"
+        dest="{{ intfsjsonfile }}"
+    - when: ansible_network_os == "iosxr"                         ####### IOSXR #######
+      name: "IOSXR - Dump interfaces facts to file"
+      tags: [ cisco, iosxr ]
+      ignore_errors: true
+      copy:
+        content="{{ iosxrinterfaceslist.ansible_facts.ansible_network_resources.interfaces | to_json }}"
+        dest="{{ intfsjsonfile }}"
+##########################################################
+#                                                        #
+#       Generate Interfaces facts Markdown Table         #
+#                                                        #
+##########################################################
+    - name: "Generate interfaces md file"
+      tags: [ cisco, ios, ioxr, nxos, junos ]
+      ignore_errors: true
+      shell: |
+        /bin/echo -e "|name|state|type|mac|bandwidth|speed|duplex|mode|mtu|description|ip|mask|" > "{{ intfsmdfile }}"
+        /bin/echo -e "|---|---|---|---|---|---|---|---|---|---|---|---|" >> "{{ intfsmdfile }}"
+        jq '. | keys[] as $k | "|\(.[$k]|.name)|\(.[$k]|.state)|\(.[$k]|.type)|\(.[$k]|.macaddress)|\(.[$k]|.bandwidth)|\(.[$k]|.speed)|\(.[$k]|.duplex)|\(.[$k]|.mode)|\(.[$k]|.mtu)|\(.[$k]|.description)|\(.[$k]|.ipv4.address)|\(.[$k]|.ipv4.masklen)|"' "{{ intfsjsonfile }}" | \
+        sed -e "s/^\"//" -e "s/\"$//" >> "{{ intfsmdfile }}"
+      args:
+        executable: /bin/bash
+##########################################################
+#                                                        #
+#                   Get VLANs facts                      #
+#                                                        #
+##########################################################
+    - when: ansible_network_os == "nxos"                         ####### NXOS  #######
+      name: "NXOS - Get vlans facts"
+      tags: [ cisco, nxos, vlans ]
+      ignore_errors: true
+      cisco.nxos.nxos_facts:
+        gather_subset:
+        - '!all'
+        - '!min'
+        gather_network_resources:
+        - vlans
+      register: "nxosvlanslist"
+    - when: ansible_network_os == "iosxr"                         ####### IOSXR #######
+      name: "IOSXR - Get vlans facts"
+      tags: [ cisco, iosxr, vlans ]
+      ignore_errors: true
+      cisco.ios.ios_facts:
+        gather_subset:
+        - '!all'
+        - '!min'
+        gather_network_resources:
+        - vlans
+      register: "iosxrvlanslist"
+##########################################################
+#                                                        #
+#               Dump VLANs facts to file                 #
+#                                                        #
+##########################################################
+    - when: ansible_network_os == "nxos"                         ####### NXOS  #######
+      name: "NXOS - Dump vlans facts to file"
+      tags: [ cisco, nxos ]
+      ignore_errors: true
+      copy:
+        content="{{ nxosvlanslist.ansible_facts.ansible_network_resources.vlans | to_json }}"
+        dest="{{ vlansjsonfile }}"
+    - when: ansible_network_os == "iosxr"                         ####### IOSXR #######
+      name: "IOSXR - Dump vlans facts to file"
+      tags: [ cisco, iosxr ]
+      ignore_errors: true
+      copy:
+        content="{{ iosxrvlanslist | to_json }}"
+        dest="{{ vlansjsonfile }}"
+##########################################################
+#                                                        #
+#                   Get LACP facts                       #
+#                                                        #
+##########################################################
+    - when: ansible_network_os == "nxos"                         ####### NXOS  #######
+      name: "NXOS - Get LACP facts"
+      tags: [ cisco, nxos, lacp ]
+      ignore_errors: true
+      cisco.nxos.nxos_facts:
+        gather_subset:
+        - '!all'
+        - '!min'
+        gather_network_resources:
+        - lacp_interfaces
+      register: "nxoslacplist"
+    - when: ansible_network_os == "iosxr"                         ####### IOSXR  #######
+      name: "IOSXR - Get LACP facts"
+      tags: [ cisco, iosxr, lacp ]
+      ignore_errors: true
+      cisco.iosxr.iosxr_facts:
+        gather_subset:
+        - '!all'
+        - '!min'
+        gather_network_resources:
+        - lacp_interfaces
+      register: "iosxrlacplist"
+##########################################################
+#                                                        #
+#                Dump LCAP facts to file                 #
+#                                                        #
+##########################################################
+    - when: ansible_network_os == "nxos"                         ####### NXOS  #######
+      name: "NXOS - Dump LACP facts to file"
+      tags: [ cisco, nxos ]
+      ignore_errors: true
+      copy:
+        content="{{ nxoslacplist | to_json }}"
+        dest="{{ lacpjsonfile }}"
+    - when: ansible_network_os == "iosxr"                         ####### IOSXR #######
+      name: "IOSXR - Dump LACP facts to file"
+      tags: [ cisco, iosxr ]
+      ignore_errors: true
+      copy:
+        content="{{ iosxrlacplist | to_json }}"
+        dest="{{ lacpjsonfile }}"
+##########################################################
+#                                                        #
+#               Generate VLANs md file                   #
+#                                                        #
+##########################################################
+    - when: ansible_network_os == "nxos"                         ####### NXOS  #######
+      name: "{{ ansible_network_os }} - {{ inventory_hostname }} - Generate vlans md file"
+      tags: [ cisco, nxos ]
+      ignore_errors: true
+      shell: |
+        /bin/echo -e "|vlan_id|name|mode|enabled|state|" > "{{ vlansmdfile }}"
+        /bin/echo -e "|---|---|---|---|---|" >> "{{ vlansmdfile }}"
+        jq '. | keys[] as $k | "|\(.[$k]|.vlan_id)|\(.[$k]|.name)|\(.[$k]|.mode)|\(.[$k]|.enabled)|\(.[$k]|.state)|"' "{{ vlansjsonfile }}" | \
+        sed -e "s/^\"//" -e "s/\"$//" >> "{{ vlansmdfile }}"
+      args:
+        executable: /bin/bash
+##########################################################
+#                                                        #
+#                       Git Push                         #
+#                                                        #
+##########################################################
+    - name: "GIT add all new files"
+      run_once: true
+      tags: [ cisco, nxos, ios, iosxr, juniper, junos, git ]
+      shell: git add -A
+      args:
+        chdir: "{{ resultdir }}"
+    - name: "GIT commit"
+      run_once: true
+      tags: [ cisco, nxos, ios, iosxr, juniper, junos, git ]
+      shell: 'git commit -a -m "{{ git_msg }}"'
+      args:
+        chdir: "{{ resultdir }}"
+      ignore_errors: true
+    - name: "GIT push"
+      run_once: true
+      tags: [ cisco, nxos, ios, iosxr, juniper, junos, git ]
+      shell: git push --force
+      args:
+        chdir: "{{ resultdir }}"
+##########################################################
+#                                                        #
+#                        Debug                           #
+#                                                        #
+##########################################################
+    - name: "Debug - {{ ansible_network_os }} - {{ inventory_hostname }} - Dump interfaces facts to stdout"
+      when: ansible_network_os == "nxos"
+      tags: [ cisco, stdout, never ]
+      debug:
+        var: item
+      loop: "{{ nxosinterfaceslist | community.general.json_query('ansible_facts.ansible_network_resources.interfaces[*].name') }}"
+

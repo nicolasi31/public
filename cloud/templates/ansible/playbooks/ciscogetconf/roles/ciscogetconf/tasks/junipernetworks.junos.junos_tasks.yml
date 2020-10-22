@@ -1,0 +1,11 @@
+- name: "{{ ansible_network_os }} - {{ inventory_hostname }} configuration backup"
+  junipernetworks.junos.junos_config:
+    backup: yes
+    backup_options:
+      filename: "{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-backup.cfg"
+      dir_path: "{{ resultdir }}"
+#  when: ansible_network_os == "junos"
+  tags: [ juniper, junos ]
+  vars:
+    - gather_facts: no
+

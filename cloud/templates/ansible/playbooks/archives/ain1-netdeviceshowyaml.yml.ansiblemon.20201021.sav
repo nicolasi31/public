@@ -1,0 +1,90 @@
+---
+- name: "Network devices information gathering"
+  hosts:
+    sbxnxos
+    sbxiosxe
+    sbxiosxr
+  connection: local
+  gather_facts: no
+  timeout: 720
+  vars:
+    timecode: "{{ lookup('pipe','date +%Y%m%d%H') }}"
+    resultdir: "/tmp/facts"
+    factsjsonfile: "{{ resultdir }}/{{ inventory_hostname }}-facts.json"
+    itemtogather: "ansible_facts.ansible_net_all_ipv4_addresses"
+    git_url: "git@bitbucket.org:poubl31/automationprivaterepo.git"
+    git_key: "{{ lookup('file','~/.ssh/id_rsa') }}"
+  tasks:
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     {{ resultdir }} directory creation                   #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "Check that {{ inventory_hostname }} facts file exists"          ##     GIT       ##
+      tags: [ json, git ]
+      stat:
+        path: "{{ resultdir }}/{{ inventory_hostname }}-facts.json"
+      register: jsonfilecheck
+
+    - name: "Create {{ resultdir }} directory if needed"     ##     DIR       ##
+      tags: [ json, git ]
+      when: not jsonfilecheck.stat.exists
+      file: path="{{ resultdir }}" state=directory mode="0755"
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Git initialisation                                   #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "GIT clone"                                      ##     GIT       ##
+      when: not jsonfilecheck.stat.exists
+      tags: [ json, git ]
+      git: repo="{{ git_url }}" dest="{{ resultdir }}" accept_hostkey="yes" key_file="{{ git_key }}"
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Dump Ansible Facts Dictionary                        #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "Include Device Vars"
+      tags: [ json ]
+      include_vars:
+        name: importedfact
+        file: "{{ resultdir }}/{{ inventory_hostname }}-facts.json"
+    - name: "Dump Debug Vars Example"
+      tags: [ json, example, never ]
+      debug:
+        msg: "{{ importedfact | json_query(query) | to_yaml }}"
+      vars:
+        query: "{{ itemtogather }}"
+
+    - name: "Dump Debug Vars Example"
+      tags: [ json, l3, never ]
+      debug:
+        msg: "{{ importedfact | json_query(query) | to_yaml }}"
+      vars:
+        query: "ansible_facts.ansible_network_resources.l3_interfaces"
+
+        # query: importedfact.ansible_facts.ansible_network_resources
+        # query: "{{ importedfact.ansible_facts.ansible_network_resources.l3_interfaces }}"
+        # query: "{{ itemtogather }}"
+      # when: importedfact.ansible_facts.ansible_network_resources.l3_interfaces is defined
+
+
+    - name: "Update Infos File - L3 par host"                ##     L3        ##
+      when: importedfact.ansible_facts.ansible_network_resources.l3_interfaces is defined
+      tags: [ cisco, nxos, ios, iosxr, junos, l3 ]
+      shell: |
+        /bin/echo -e "|{{ item.name | default('null') }}"\
+        "|{{ item | json_query(query) | default('null') | flatten }}|"\
+        "" >> "/tmp/toto.json"
+      args:
+        executable: /bin/bash
+      vars:
+        query: "ipv4[*].address"
+      loop: "{{ importedfact.ansible_facts.ansible_network_resources.l3_interfaces }}"
+

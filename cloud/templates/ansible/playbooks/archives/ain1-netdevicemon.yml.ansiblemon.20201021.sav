@@ -1,0 +1,455 @@
+---
+- name: "Network devices information gathering"
+  hosts:
+    # sbxnxos
+    # sbxiosxe
+    # sbxiosxr
+    all
+  gather_facts: no
+  timeout: 720
+  vars:
+    ansible_command_timeout: 720
+    ansible_connection_timeout: 720
+    resultdir: "/tmp/facts"
+    timecode: "{{ lookup('pipe','date +%Y%m%d%H') }}"
+    factsjsonfile: "{{ resultdir }}/{{ inventory_hostname }}-facts.json"
+    configfile: "{{ resultdir }}/{{ inventory_hostname }}-confg"
+    hostinfosmdfile: "{{ resultdir }}/{{ inventory_hostname }}-infos.md"
+    git_url: "git@bitbucket.org:poubl31/automationprivaterepo.git"
+    git_username: poubl31
+    git_email: poubl31@gmail.com
+    git_key: "{{ lookup('file','~/.ssh/id_rsa') }}"
+    git_branch: "master"
+    git_msg: "update files with ansible"
+    git_remove_local: false
+  tasks:
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     {{ resultdir }} directory creation                   #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "Create {{ resultdir }} directory"               ##     DIR       ##
+      tags: [ cisco, nxos, ios, iosxr, junos, stdout ]
+      run_once: true
+      file: path="{{ resultdir }}" state=directory mode="0755"
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Git initialisation                                   #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "GIT clone"                                      ##     GIT       ##
+      tags: [ cisco, nxos, ios, iosxr, junos, git, stdout ]
+      run_once: true
+      git: repo="{{ git_url }}" dest="{{ resultdir }}" accept_hostkey="yes" key_file="{{ git_key }}"
+#    - name: "GIT username"                                   ##     GIT       ##
+#      when: git_username is defined
+#      tags: [ cisco, nxos, ios, iosxr, junos, git, stdout ]
+#      run_once: true
+#      shell: git config user.name "{{ git_username }}"
+#      args:
+#        chdir: "{{ resultdir }}"
+#    - name: "GIT email"                                      ##     GIT       ##
+#      when: git_email is defined and git_username is not defined
+#      run_once: true
+#      tags: [ cisco, nxos, ios, iosxr, junos, git, stdout ]
+#      shell: git config user.email "{{ git_email }}"
+#      args:
+#        chdir: "{{ resultdir }}"
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Create Ansible Facts Dictionary                      #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "NXOS - Get device facts"                        ##     NXOS      ##
+      when: ansible_network_os == "nxos"
+      tags: [ cisco, nxos, facts, stdout ]
+      ignore_errors: true
+      cisco.nxos.nxos_facts:
+        gather_subset: all
+        gather_network_resources:
+        - acl_interfaces
+        - acls
+        - bfd_interfaces
+        - hsrp_interfaces
+        - interfaces
+        - l2_interfaces
+        - l3_interfaces
+        - lacp
+        - lacp_interfaces
+        - lag_interfaces
+        - lldp_global
+        - lldp_interfaces
+        - static_routes
+        - telemetry
+        - vlans
+#        - ospfv2
+      register: factsdictnxos
+    - name: "IOS - Get device facts"                         ##     IOS       ##
+      when: ansible_network_os == "ios"
+      tags: [ cisco, ios, facts, stdout ]
+      ignore_errors: true
+      cisco.ios.ios_facts:
+        gather_subset: all
+        gather_network_resources:
+        - acl_interfaces
+        - acls
+        - interfaces
+        - l2_interfaces
+        - l3_interfaces
+        - lacp
+        - lacp_interfaces
+        - lag_interfaces
+        - lldp_global
+        - lldp_interfaces
+        - static_routes
+#        - vlans
+#        - ospfv2
+      register: factsdictios
+    - name: "IOSXR - Get device facts"                       ##     IOSXR     ##
+      when: ansible_network_os == "iosxr"
+      tags: [ cisco, iosxr, facts, stdout ]
+      ignore_errors: true
+      cisco.iosxr.iosxr_facts:
+        gather_subset: all
+        gather_network_resources:
+        - acls
+        - interfaces
+        - l2_interfaces
+        - l3_interfaces
+        - lacp
+        - lacp_interfaces
+        - lag_interfaces
+        - lldp_global
+        - lldp_interfaces
+        - static_routes
+#        - acl_interfaces
+#        - ospfv2
+      register: factsdictiosxr
+    - name: "JUNOS - Get device facts"                       ##     JUNOS     ##
+      when: ansible_network_os == "junos"
+      tags: [ cisco, junos, facts, stdout ]
+      ignore_errors: true
+      junipernetworks.junos.junos_facts:
+        gather_subset: all
+        gather_network_resources: all
+      register: factsdictjunos
+    - name: "NXOS - Update final facts"                      ##     NXOS      ##
+      when: ansible_network_os == "nxos"
+      set_fact: factsdict="{{ factsdictnxos }}"
+    - name: "IOS - Update final facts"                       ##     IOS       ##
+      when: ansible_network_os == "ios"
+      set_fact: factsdict="{{ factsdictios }}"
+    - name: "IOSXR - Update final facts"                     ##     IOSXR     ##
+      when: ansible_network_os == "iosxr"
+      set_fact: factsdict="{{ factsdictiosxr }}"
+    - name: "JUNOS - Update final facts"                     ##     JUNOS     ##
+      when: ansible_network_os == "junos"
+      set_fact: factsdict="{{ factsdictjunos }}"
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Create Ansible Facts JSON file                       #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "Dump facts to file"                             ##     FACTS     ##
+      tags: [ cisco, nxos, ios, iosxr, junos, facts ]
+      ignore_errors: true
+      copy:
+        content="{{ factsdict }}"
+        dest="{{ factsjsonfile }}"
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Create Ansible Facts MD file                         #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "Create Facts MD files"                          ##     FACTS     ##
+      tags: [ cisco, ios, ioxr, nxos, junos ]
+      ignore_errors: true
+      shell: (/bin/echo -e '```json' ; cat "{{ factsjsonfile }}" | python -m json.tool ; /bin/echo -e '```') > "{{ factsjsonfile }}.md"
+      args:
+        executable: /bin/bash
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Generate Config Backup                               #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "Generate configuration backup file"             ##     CONFIG    ##
+      when: factsdict.ansible_facts.ansible_net_config is defined 
+      tags: [ cisco, ios, ioxr, nxos, junos, config ]
+      ignore_errors: true
+      copy:
+        content="{{ factsdict.ansible_facts.ansible_net_config }}"
+        dest="{{ configfile }}"
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Generate Interfaces Markdown Table                   #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "Create Infos File - Interfaces table header"    ##   INTERFACES  ##
+      when: factsdict.ansible_facts.ansible_net_interfaces is defined 
+      tags: [ cisco, nxos, ios, ioxr, junos, interfaces ]
+      ignore_errors: true
+      shell: |
+        /bin/echo -e "[TOC]"\
+        "\n# {{ inventory_hostname }} -  {{ ansible_network_os }} - Interface infos"\
+        "\n| name | state | type | mac | bandwidth | speed | duplex | mode | mtu | description | ip  | mask |"\
+        "\n| ---  |  ---  | ---  | --- | --------- | ----- | ------ | ---- | --- | ----------- | --- | ---- |" > "{{ hostinfosmdfile }}"
+      args:
+        executable: /bin/bash
+    - name: "Update Infos File - Interfaces par host"        ##   INTERFACES  ##
+      when: factsdict.ansible_facts.ansible_net_interfaces is defined 
+      tags: [ cisco, nxos, ios, ioxr, junos, interfaces ]
+      shell: |
+        /bin/echo -n "|{{ item.key | default('null') }}"\
+        "|{{ item.value.state | default('null') }}"\
+        "|{{ item.value.type | default('null') }}" \
+        "|{{ item.value.macaddress | default('null') }}"\
+        "|{{ item.value.bandwidth | default('null') }}"\
+        "|{{ item.value.speed | default('null') }}"\
+        "|{{ item.value.duplex | default('null') }}"\
+        "|{{ item.value.mode | default('null') }}"\
+        "|{{ item.value.mtu | default('null') }}"\
+        "|{{ item.value.description | default('null') }}"\
+        "|{{ item.value.ipv4.address | default('null') }}"\
+        "|{{ item.value.ipv4.masklen | default('null') }}|" >> "{{ hostinfosmdfile }}"
+        /bin/echo -e "" >> "{{ hostinfosmdfile }}"
+      args:
+        executable: /bin/bash
+      loop: "{{ factsdict.ansible_facts.ansible_net_interfaces | dict2items }}"
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Generate VLANs in Infos Markdown File                #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "Update Infos File - VLANs table header"         ##    VLANs      ##
+      when: factsdict.ansible_facts.ansible_network_resources.vlans is defined
+      tags: [ cisco, nxos, ios, iosxr, junos, vlans ]
+      ignore_errors: true
+      shell: |
+        /bin/echo -e "\n# {{ inventory_hostname }} - {{ ansible_network_os }} - VLANs infos"\
+        "\n| vlan_id | name | mode | enabled | state |"\
+        "\n| ------- | ---- | ---- | ------- | ----- |" >> "{{ hostinfosmdfile }}"
+      args:
+        executable: /bin/bash
+    - name: "Update Infos File - VLANs par host"             ##    VLANs      ##
+      when: factsdict.ansible_facts.ansible_network_resources.vlans is defined
+      tags: [ cisco, nxos, ios, iosxr, junos, vlans ]
+      shell: |
+        /bin/echo -n "|{{ item.vlan_id | default('null') }}"\
+        "|{{ item.name | default('null') }}"\
+        "|{{ item.mode | default('null') }}"\
+        "|{{ item.enabled | default('null') }}"\
+        "|{{ item.state | default('null') }}|"  >> "{{ hostinfosmdfile }}"
+        /bin/echo -e "" >> "{{ hostinfosmdfile }}"
+      args:
+        executable: /bin/bash
+      loop: "{{ factsdict.ansible_facts.ansible_network_resources.vlans }}"
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Generate L2 interfaces in Infos Markdown File        #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "Update Infos File - L2 table header"            ##     L2        ##
+      when: factsdict.ansible_facts.ansible_network_resources.l2_interfaces is defined
+      tags: [ cisco, nxos, ios, iosxr, junos, l2 ]
+      ignore_errors: true
+      shell: |
+        /bin/echo -e "\n# {{ inventory_hostname }} - {{ ansible_network_os }} - L2 infos"\
+        "\n| name | mode | trunk.allowed_vlans |"\
+        "\n| ---- | ---- | ------------------- |" >> "{{ hostinfosmdfile }}"
+      args:
+        executable: /bin/bash
+    - name: "Update Infos File - L2 par host"                ##     L2        ##
+      when: factsdict.ansible_facts.ansible_network_resources.l2_interfaces is defined
+      tags: [ cisco, nxos, ios, iosxr, junos, l2 ]
+      shell: |
+        /bin/echo -n "|{{ item.name | default('null') }}"\
+        "|{{ item.mode | default('null') }}"\
+        "|{{ item.trunk.allowed_vlans | default('null') }}|" >> "{{ hostinfosmdfile }}"
+        /bin/echo -e "" >> "{{ hostinfosmdfile }}"
+      args:
+        executable: /bin/bash
+      loop: "{{ factsdict.ansible_facts.ansible_network_resources.l2_interfaces }}"
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Generate L3 interfaces in Infos Markdown File        #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "Update Infos File - L3 table header"            ##     L3        ##
+      when: factsdict.ansible_facts.ansible_network_resources.l3_interfaces is defined
+      tags: [ cisco, nxos, ios, iosxr, junos, l3 ]
+      ignore_errors: true
+      shell: |
+        /bin/echo -e "\n# {{ inventory_hostname }} - {{ ansible_network_os }} - L3 infos"\
+        "\n| name | ipv4 address |"\
+        "\n| ---- | ------------ |" >> "{{ hostinfosmdfile }}"
+      args:
+        executable: /bin/bash
+    - name: "Update Infos File - L3 par host"                ##     L3        ##
+      when: factsdict.ansible_facts.ansible_network_resources.l3_interfaces is defined
+      tags: [ cisco, nxos, ios, iosxr, junos, l3 ]
+      shell: |
+        /bin/echo -n "|{{ item.name | default('null') }}"\
+        "|{{ item | dict2items | json_query('ipv4[*].address') | default('null') }}|"\
+        /bin/echo -e "" >> "{{ hostinfosmdfile }}"
+      args:
+        executable: /bin/bash
+      loop: "{{ factsdict.ansible_facts.ansible_network_resources.l3_interfaces }}"
+#
+#        "|{{ item | dicts2item) | json_query('ipv4[*].address') | default('null') }}|"\
+#        "|{% for intvarloop in {{ item.address }} %}{{ intvarloop }}{% endfor %} | default('null') }}|"\
+#        "|{{ item | json_query('ipv4[*].address') | {% for intvarloop in {{ item }} %}{{ intvarloop }}{% endfor %} | default('null') }}|"\
+#        "|{% for intvarloop in {{ item | json_query('ipv4[*].address') | default('null') }} %}{{ intvarloop }}{% if not loop last %},{% endif %}{% endfor %}{% endfor %}|"\
+#        "|{% for intvarloop in item.ipv4[] %}{{ intvarloop }}{% endfor %}|"\
+#        "|{{ item | json_query('ipv4[*].address') | default('null') }}|"\
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Generate LAG interfaces in Infos Markdown File       #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "Update Infos File - LAG table header"           ##     LAG       ##
+      when: factsdict.ansible_facts.ansible_network_resources.lag_interfaces is defined
+      tags: [ cisco, nxos, ios, iosxr, junos, lag ]
+      ignore_errors: true
+      shell: |
+        /bin/echo -e "\n# {{ inventory_hostname }} - {{ ansible_network_os }} - LAG infos"\
+        "\n| name | members.member |"\
+        "\n| ---- | -------------- |" >> "{{ hostinfosmdfile }}"
+      args:
+        executable: /bin/bash
+    - name: "Update Infos File - LAG par host"               ##     LAG       ##
+      when: factsdict.ansible_facts.ansible_network_resources.lag_interfaces is defined
+      tags: [ cisco, nxos, ios, iosxr, junos, lag ]
+      shell: |
+        /bin/echo -n "|{{ item.name | default('null') }}"\
+        "|{{ item | json_query('members[*].member') | default('null') }}|" >> "{{ hostinfosmdfile }}"
+        /bin/echo -e "" >> "{{ hostinfosmdfile }}"
+      args:
+        executable: /bin/bash
+      loop: "{{ factsdict.ansible_facts.ansible_network_resources.lag_interfaces }}"
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Generate LLDP interfaces in Infos Markdown File      #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "Update Infos File - LLDP table header"          ##     LLDP      ##
+      when: factsdict.ansible_facts.ansible_network_resources.lldp_interfaces is defined
+      tags: [ cisco, nxos, ios, iosxr, junos, lldp ]
+      ignore_errors: true
+      shell: |
+        /bin/echo -e "\n# {{ inventory_hostname }} - {{ ansible_network_os }} - LLDP infos"\
+        "\n| name |"\
+        "\n| ---- |" >> "{{ hostinfosmdfile }}"
+      args:
+        executable: /bin/bash
+    - name: "Update Infos File - LLDP par host"              ##     LLDP      ##
+      when: factsdict.ansible_facts.ansible_network_resources.lldp_interfaces is defined
+      tags: [ cisco, nxos, ios, iosxr, junos, lldp ]
+      shell: |
+        /bin/echo -n "|{{ item.name | default('null') }}|" >> "{{ hostinfosmdfile }}"
+        /bin/echo -e "" >> "{{ hostinfosmdfile }}"
+      args:
+        executable: /bin/bash
+      loop: "{{ factsdict.ansible_facts.ansible_network_resources.lldp_interfaces }}"
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Generate README.md Table                             #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "Generate { resultdir }}/README.md file"         ##   README.md   ##
+      tags: [ cisco, ios, ioxr, nxos, junos, readme ]
+      ignore_errors: true
+      run_once: true
+      shell: |
+        /bin/echo -e "# Ansible Network Automation Repo\n[TOC]"\
+        "\n# Device List"\
+        "\n\n| alias | hostname | system | version | iostype | platform | serialnum |"\
+        "\n| ----- | -------- | ------ | ------- | ------- | -------- | --------- |" > "{{ resultdir }}/README.md"
+      args:
+        executable: /bin/bash
+    - name: "Update { resultdir }}/README.md file"           ##   README.md   ##
+      tags: [ cisco, ios, ioxr, nxos, junos, readme ]
+      ignore_errors: true
+      shell: |
+        /bin/echo -n "|{{ inventory_hostname | default('null') }}"\
+        "|{{ ansible_host | default('null') }}"\
+        "|{{ factsdict.ansible_facts.ansible_net_system | default('null') }}"\
+        "|{{ factsdict.ansible_facts.ansible_net_version | default('null') }}"\
+        "|{{ factsdict.ansible_facts.ansible_net_iostype | default('null') }}"\
+        "|{{ factsdict.ansible_facts.ansible_net_platform | default('null') }}"\
+        "|{{ factsdict.ansible_facts.ansible_net_serialnum | default('null') }}|" >> "{{ resultdir }}/README.md"
+        /bin/echo -e "" >> "{{ resultdir }}/README.md"
+      args:
+        executable: /bin/bash
+    - name: "Update README.md file"                          ##   README.md   ##
+      tags: [ cisco, nxos, ios,ioxr, junos, readme ]
+      run_once: true
+      ignore_errors: true
+      shell: |
+        /bin/echo -e "\n# Devices Infos\n" >> "{{ resultdir }}/README.md"
+        find "{{ resultdir }}" -name "*-infos.md" -printf "- [%f](%f)\n" >> "{{ resultdir }}/README.md"
+        /bin/echo -e "\n# Configs\n" >> "{{ resultdir }}/README.md"
+        find "{{ resultdir }}" -name "*-confg" -printf "- [%f](%f)\n" >> "{{ resultdir }}/README.md"
+        /bin/echo -e "\n# Ansible Facts (source)\n" >> "{{ resultdir }}/README.md"
+        find "{{ resultdir }}" -name "*facts.json" -printf "- [%f](%f)\n" >> "{{ resultdir }}/README.md"
+        /bin/echo -e "\n# Ansible Facts (markdown)\n" >> "{{ resultdir }}/README.md"
+        find "{{ resultdir }}" -name "*facts.json.md" -printf "- [%f](%f)\n" >> "{{ resultdir }}/README.md"
+      args:
+        executable: /bin/bash
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     GIT Push                                             #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "GIT sync"                                       ##     GIT       ##
+      run_once: true
+      tags: [ cisco, nxos, ios, iosxr, junos, git ]
+      shell: |
+        git add -A
+        git commit -a -m "{{ git_msg }}"
+        git push --force
+      args:
+        chdir: "{{ resultdir }}"
+      ignore_errors: true
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     Some interesting commands...                         #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    # loop: "{{ factsdict | community.general.json_query('ansible_facts.ansible_network_resources.interfaces[*]') }}"
+    # loop: "{{ factsdict | community.general.json_query('ansible_facts.ansible_net_interfaces') }}"
+    # with_dict: "{{ factsdict.ansible_facts.ansible_net_interfaces }}"
+    # shell: jq .ansible_facts.ansible_net_config "{{ factsjsonfile }}" | sed -e "s/^\"//" -e "s/\"$//" -e "s/\\\n/\n/g" > "{{ configfile }}"
+    # ( jq -e '.ansible_facts.ansible_net_interfaces | keys[] as $k | "|\($k)|\(.[$k]|.state)|\(.[$k]|.type)|\(.[$k]|.macaddress)|\(.[$k]|.bandwidth)|\(.[$k]|.speed)|\(.[$k]|.duplex)|\(.[$k]|.mode)|\(.[$k]|.mtu)|\(.[$k]|.description)|\(.[$k]|.ipv4.address)|\(.[$k]|.ipv4.masklen)|"' "{{ factsjsonfile }}" | sed -e "s/^\"//" -e "s/\"$//" || /bin/echo -e "| no data | no data | no data | no data | no data | no data | no data | no data | no data | no data | no data | no data |" ) >> "{{ hostinfosmdfile }}"
+    # ( jq -e '.ansible_facts.ansible_network_resources.vlans | keys[] as $k | "|\(.[$k]|.vlan_id)|\(.[$k]|.name)|\(.[$k]|.mode)|\(.[$k]|.enabled)|\(.[$k]|.state)|"' "{{ factsjsonfile }}" | sed -e "s/^\"//" -e "s/\"$//" || /bin/echo -e "| no data | no data | no data | no data | no data |" ) >> "{{ hostinfosmdfile }}"
+    # "|{% for intvarloop in item.ipv4 %}{{ intvarloop }}{% if not loop last %},{% endif %}{% endfor %}|"\
+

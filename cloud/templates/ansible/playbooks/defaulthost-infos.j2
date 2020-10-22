@@ -1,0 +1,59 @@
+[TOC]
+
+{% if importedfact.ansible_facts.ansible_net_interfaces is defined %}
+# sbxnxos -  nxos - Interface infos
+| name | state | type | mac | bandwidth | speed | duplex | mode | mtu | description | ip  | mask |
+| ---  |  ---  | ---  | --- | --------- | ----- | ------ | ---- | --- | ----------- | --- | ---- |
+{% for key,value in importedfact.ansible_facts.ansible_net_interfaces.items() %}
+|{{ key | default ('null')}}|{{ value.state | default ('null')}}|{{ value.type | default ('null')}}|{{ value.macaddress | default ('null')}}|{{ value.bandwidth | default ('null')}}|{{ value.speed | default ('null')}}|{{ value.duplex | default ('null')}}|{{ value.mode | default ('null')}}|{{ value.mtu | default ('null')}}|{{ value.description | default ('null')}}|{{ value.ipv4.address | default ('null')}}|{{ value.ipv4.masklen | default ('null')}}|
+{% endfor %}
+{% endif %}
+
+{% if importedfact.ansible_facts.ansible_network_resources.vlans is defined %}
+# sbxnxos - nxos - VLANs infos
+| vlan_id | name | mode | enabled | state |
+| ------- | ---- | ---- | ------- | ----- |
+{% for value in importedfact.ansible_facts.ansible_network_resources.vlans %}
+|{{ value.vlan_id | default ('null') }}|{{ value.name | default ('null') }}|{{ value.mode | default ('null') }}|{{ value.enabled | default ('null') }}|{{ value.state | default ('null') }}|
+{% endfor %}
+{% endif %}
+
+{% if importedfact.ansible_facts.ansible_network_resources.l2_interfaces is defined %}
+# sbxnxos - nxos - L2 infos
+| name | mode | trunk.allowed_vlans |
+| ---- | ---- | ------------------- |
+{% for value in importedfact.ansible_facts.ansible_network_resources.l2_interfaces %}
+|{{ value.name | default ('null') }}|{{ value.mode | default ('null') }}|{{ value.trunk.allowed_vlans | default ('null') }}|
+{% endfor %}
+{% endif %}
+
+{% if importedfact.ansible_facts.ansible_network_resources.l3_interfaces is defined %}
+# sbxnxos - nxos - L3 infos
+| name | ipv4 address |
+| ---- | ------------ |
+{% for value in importedfact.ansible_facts.ansible_network_resources.l3_interfaces recursive %}
+|{{ value.name | default ('null') }}|{% if value.ipv4 is defined %}
+{% for value2 in value.ipv4 recursive %}{% if loop.first == false %}, {% endif %}{{ value2.address | default ('null') }}{% endfor %}
+{% endif %}|
+{% endfor %}
+{% endif %}
+
+{% if importedfact.ansible_facts.ansible_network_resources.lag_interfaces is defined %}
+# sbxnxos - nxos - LAG infos
+| name | members.member |
+| ---- | -------------- |
+{% for value in importedfact.ansible_facts.ansible_network_resources.lag_interfaces recursive %}
+|{{ value.name | default ('null') }}|{% if value.members is defined %}
+{% for value2 in value.members recursive %}{% if loop.first == false %}, {% endif %}{{ value2.member | default ('null') }}{% endfor %}
+{% endif %}|
+{% endfor %}
+{% endif %}
+
+{% if importedfact.ansible_facts.ansible_network_resources.lldp_interfaces is defined %}
+# sbxnxos - nxos - LLDP infos
+| name |
+| ---- |
+{% for value in importedfact.ansible_facts.ansible_network_resources.lldp_interfaces recursive %}
+|{{ value.name | default ('null') }}|
+{% endfor %}
+{% endif %}

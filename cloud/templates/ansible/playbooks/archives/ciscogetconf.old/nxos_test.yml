@@ -1,0 +1,23 @@
+---
+- hosts: sbxnxos
+  vars: 
+    my_creds:
+      host: "{{ ansible_host }}"
+      username: "{{ ansible_httpapi_remote_user }}"
+      password:  "{{ ansible_httpapi_password }}"
+      port: 443
+      transport: nxapi
+      validate_certs: "{{ https.validate_certs }}"
+      timeout: 60
+
+
+  tasks:
+    - nxos_facts:
+        provider: "{{ my_creds }}"
+#        gather_subset: all
+        use_ssl: yes
+        port: 443
+        validate_certs: False
+      register: output
+
+    - debug: msg="{{ output }}"

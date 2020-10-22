@@ -1,0 +1,58 @@
+---
+- name: "Network devices information gathering"
+  hosts:
+    all
+  connection: local
+  gather_facts: no
+  timeout: 720
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    timecode: "{{ lookup('pipe','date +%Y%m%d%H') }}"
+    influxdb_ip_address: 127.0.0.1
+    influxdb_ip_port: 8086
+    influxdb_database_name: mydb
+    cmdnxosvlancount: 'show vlan summary | grep "Number of existing VLANs" | tr -d " " | cut -d : -f 2'
+    cmdnxosmaccount: 'show mac address-table limit all | tr -s " " | cut -d " "  -f 3 | grep "^[0-9]" | sort -n | last 1'
+#    commandtorun: 'show mac address-table | grep ....\.....\..... | tr -s " " | cut -d " " -f 8 | uniq -c'
+#    commandtorun: 'show ip route summary | grep "Total number of routes" | tr -d " " | cut -d : -f 2'
+#    commandtorun: 'show ip arp statistics'
+#    commandtorun: 'show vrrp detail'
+#    commandtorun: 'show copp status'
+  tasks:
+   ######################################################      
+  #                                                      #    
+ #                                                        #  
+#     NXOS VLAN count                                      #
+ #                                                        #  
+  #                                                      #    
+   ######################################################
+    - name: "NXOS - Run commands"                         ## RUN CMD            ##
+      cisco.nxos.nxos_command:
+        commands:
+        - "{{ cmdnxosvlancount }}"
+        - "{{ cmdnxosmaccount }}"
+      register: commandresult
+      tags: [ influxdb, run ]
+      when: ansible_network_os == "nxos"
+    - name: "NXOS - Write points into influxdb"          ## PUSH TO INFLUXDB   ##
+      community.general.influxdb_write:
+        hostname: "{{ influxdb_ip_address }}"
+        port: "{{ influxdb_ip_port }}"
+        database_name: "{{ influxdb_database_name }}"
+        data_points:
+          - measurement: vlancount
+            tags:
+              hostname: "{{ inventory_hostname }}"
+              location: "new-york"
+            time: "{{ now(utc=True).isoformat() }}"
+            fields:
+              value: "{{ commandresult.stdout[0] }}"
+          - measurement: maccount
+            tags:
+              hostname: "{{ inventory_hostname }}"
+              location: "new-york"
+            time: "{{ now(utc=True).isoformat() }}"
+            fields:
+              value: "{{ commandresult.stdout[1] }}"
+      when: ansible_network_os == "nxos"
+

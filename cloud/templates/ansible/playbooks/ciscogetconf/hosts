@@ -1,12 +1,49 @@
 ---
 all:
   children:
-    mygroup:
+    tlslab:
       hosts:
-        SRD1POD1:
-          ansible_host: 10.0.0.1
-        SRD2POD2:
-          ansible_host: 10.0.0.2
+        RTR1TLSLAB:
+          ansible_connection: network_cli
+          ansible_network_os: ios
+          ansible_host: 10.71.86.1
+          ansible_user: "a3227389"
+          ansible_python_interpreter: /usr/bin/python
+        SRT1TLSLAB:
+          ansible_connection: network_cli
+          ansible_network_os: ios
+          ansible_host: 10.71.86.2
+          ansible_user: "a3227389"
+          ansible_python_interpreter: /usr/bin/python
+        SWA1GNS3TEST:
+          ansible_connection: httpapi
+          ansible_host: 10.71.86.90
+          ansible_user: "admin"
+          ansible_password: "admin"
+#          ansible_httpapi_remote_user: "admin"
+#          ansible_httpapi_password: "admin"
+          ansible_httpapi_port: 443
+          ansible_httpapi_use_ssl: yes
+          ansible_httpapi_validate_certs: no
+          ansible_network_os: nxos
+        SRD1QVIADMHB1VLD:
+#          ansible_connection: network_cli
+#          ansible_connection: ansible.netcommon.network_cli
+          ansible_connection: ansible.netcommon.netconf
+          ansible_network_os: junipernetworks.junos.junos
+          ansible_host: 10.60.127.65
+          ansible_user: "a3227389"
+          ansible_python_interpreter: /usr/bin/python
+          ansible_command_timeout: 120
+        SWA01103XATADMHB1VLD:
+#          ansible_connection: network_cli
+#          ansible_connection: ansible.netcommon.network_cli
+          ansible_connection: ansible.netcommon.netconf
+          ansible_network_os: junipernetworks.junos.junos
+          ansible_host: 10.60.127.116
+          ansible_user: "a3227389"
+          ansible_python_interpreter: /usr/bin/python
+          ansible_command_timeout: 120
       vars:
           gather_facts: false
     sbx:
@@ -23,9 +60,18 @@ all:
           ansible_httpapi_use_ssl: yes
           ansible_httpapi_validate_certs: no
           ansible_network_os: nxos
+          ansible_command_timeout: 120
 #          ansible_timeout: 120
-#      vars:
-          gather_facts: no
+        sbxiosxr:
+          ansible_connection: network_cli
+          ansible_network_os: iosxr
+          ansible_host: sbx-iosxr-mgmt.cisco.com
+          ansible_user: "admin"
+          ansible_password: "C1sco12345"
+          ansible_port: "8181"
+          ansible_python_interpreter: /usr/bin/python
+      vars:
+          gather_facts: false
 ##          ansible_network_os: nxos
 ##          ansible_network_os: cisco.nxos.nxos
 ##          ansible_connection: httpapi

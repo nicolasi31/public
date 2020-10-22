@@ -1,0 +1,38 @@
+#- name: get schema using XML request
+#  ansible.netcommon.netconf_rpc:
+#    rpc: get-schema
+#    xmlns: urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring
+
+
+#- name: "get interface configuration with filter (iosxr)"
+#  ansible.netcommon.netconf_rpc:
+#    rpc: get-interface-information 
+#    xmlns: urn:ietf:params:xml:ns:netconf:base:1.0
+##    xmlns: urn:ietf:params:netconf:base:1.1
+##  register: netconf_info 
+
+#- name: "PRINT OUTPUT TO TERMINAL WINDOW"
+#  debug: 
+#  var: netconf_info
+
+
+#- name: get interface configuration with filter (iosxr)
+#  ansible.netcommon.netconf_get:
+#    display: pretty
+#    filter: <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg"></interface-configurations>
+#    lock: if-supported
+
+- name: get schema list with JSON output
+  ansible.netcommon.netconf_rpc:
+    rpc: get
+    content: |
+      <filter>
+        <netconf-state xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring">
+          <schemas/>
+        </netconf-state>
+      </filter>
+    display: pretty
+##    display: xml
+##    display: json
+
+#        <netconf-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">

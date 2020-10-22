@@ -1,0 +1,6 @@
+{% if importedfact.ansible_facts.ansible_net_interfaces is defined %}
+| name | state | type | mac | bandwidth | speed | duplex | mode | mtu | description | ip  | mask |
+{% for key,value in importedfact.ansible_facts.ansible_net_interfaces.items() %}
+|{{ key | default ('null')}}|{{ value.state | default ('null')}}|{{ value.type | default ('null')}}|{{ value.macaddress | default ('null')}}|{{ value.bandwidth | default ('null')}}|{{ value.speed | default ('null')}}|{{ value.duplex | default ('null')}}|{{ value.mode | default ('null')}}|{{ value.mtu | default ('null')}}|{{ value.description | default ('null')}}|{{ value.ipv4.address | default ('null')}}|{{ value.ipv4.masklen | default ('null')}}|
+{% endfor %}
+{% endif %}

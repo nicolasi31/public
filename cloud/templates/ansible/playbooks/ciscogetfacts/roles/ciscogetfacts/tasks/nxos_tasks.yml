@@ -1,0 +1,21 @@
+- name: "NXOS - Get Facts - interfaces"
+  cisco.nxos.nxos_facts:
+    gather_subset:
+    - '!all'
+    - '!min'
+    gather_network_resources:
+    - interfaces
+  register: "nxosinterfaceslist"
+  when: ansible_network_os == "nxos"
+
+- name: "NXOS - Dump Facts to File - interfaces"
+  copy: content="{{ nxosinterfaceslist | to_json }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-interfaces.cfg"
+#  copy: content="{{ nxosinterfaceslist | to_yaml }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-interfaces.cfg"
+#  copy: content="{{ nxosinterfaceslist | dict2items }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-interfaces.cfg"
+  when: ansible_network_os == "nxos"
+
+
+- name: "Display all cluster names"
+  debug:
+    var: item
+  loop: "{{ nxosinterfaceslist | community.general.json_query('ansible_facts.ansible_network_resources.interfaces[*].name') }}"

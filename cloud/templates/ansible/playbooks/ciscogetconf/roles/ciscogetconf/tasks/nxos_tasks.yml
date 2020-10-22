@@ -1,0 +1,89 @@
+- name: "{{ ansible_network_os }} - {{ inventory_hostname }} configuration backup"
+  cisco.nxos.nxos_config:
+    backup: yes
+    backup_options:
+      filename: "{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-backup.cfg"
+      dir_path: "{{ resultdir }}"
+  tags: [ cisco, nxos ]
+#  when: ansible_network_os == "nxos"
+  vars:
+    - gather_facts: no
+
+- name: "{{ ansible_network_os }} - Dump Inventory vars to File"
+  copy: content="{{ hostvars[inventory_hostname] }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-inventoryvars.cfg"
+  tags: [ cisco, nxos ]
+
+- name: "{{ ansible_network_os }} - Get Facts - all"
+  nxos_facts:
+    gather_subset: all
+#    gather_subset: "!config"
+  tags: [ cisco, nxos ]
+  register: "nxosfacts"
+- name: "{{ ansible_network_os }} - Dump Facts to File - all"
+  copy: content="{{ nxosfacts }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts.cfg"
+  tags: [ cisco, nxos ]
+
+- name: "{{ ansible_network_os }} - Get Facts - config"
+  nxos_facts:
+    gather_subset: config
+  tags: [ cisco, nxos ]
+  register: "nxosfactsconfig"
+- name: "{{ ansible_network_os }} - Dump Facts to File - config"
+  copy: content="{{ nxosfactsconfig }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-config.cfg"
+  tags: [ cisco, nxos ]
+
+- name: "{{ ansible_network_os }} - Get Facts - default"
+  nxos_facts:
+    gather_subset: default
+  tags: [ cisco, nxos ]
+  register: "nxosfactsdefault"
+- name: "{{ ansible_network_os }} - Dump Facts to File - default"
+  copy: content="{{ nxosfactsdefault }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-default.cfg"
+  tags: [ cisco, nxos ]
+ 
+- name: "{{ ansible_network_os }} - Get Facts - features"
+  nxos_facts:
+    gather_subset: features
+  tags: [ cisco, nxos ]
+  register: "nxosfactsfeatures"
+- name: "{{ ansible_network_os }} - Dump Facts to File - features"
+  copy: content="{{ nxosfactsfeatures }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-features.cfg"
+  tags: [ cisco, nxos ]
+ 
+- name: "{{ ansible_network_os }} - Get Facts - hardware"
+  nxos_facts:
+    gather_subset: hardware
+  tags: [ cisco, nxos ]
+  register: "nxosfactshardware"
+- name: "{{ ansible_network_os }} - Dump Facts to File - hardware"
+  copy: content="{{ nxosfactshardware }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-hardware.cfg"
+  tags: [ cisco, nxos ]
+
+- name: "{{ ansible_network_os }} - Get Facts - interfaces"
+  nxos_facts:
+    gather_subset: interfaces
+  tags: [ cisco, nxos ]
+  register: "nxosfactsinterfaces"
+- name: "{{ ansible_network_os }} - Dump Facts to File - interfaces"
+  copy: content="{{ nxosfactsinterfaces }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-interfaces.cfg"
+  tags: [ cisco, nxos ]
+
+- name: "{{ ansible_network_os }} - Get Facts - legacy"
+  nxos_facts:
+    gather_subset: legacy
+  tags: [ cisco, nxos ]
+  register: "nxosfactslegacy"
+- name: "{{ ansible_network_os }} - Dump Facts to File - legacy"
+  copy: content="{{ nxosfactslegacy }}" dest="{{ resultdir }}/{{ inventory_hostname }}-{{ lookup('pipe','date +%Y%m%d%H%M%S') }}-facts-legacy.cfg"
+  tags: [ cisco, nxos ]
+
+#- name: "Dump NXOS Facts"
+#  debug: msg="{{ nxosfacts }}"
+#  tags: [ cisco, nxos ]
+#
+#- name: Display all variables/facts known for a host
+#  debug:
+#    var: hostvars[inventory_hostname]
+#    verbosity: 4
+#  tags: [ cisco, nxos ]
+
